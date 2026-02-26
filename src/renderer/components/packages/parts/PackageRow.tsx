@@ -3,40 +3,32 @@
  * 5 列: パッケージ名 / 指定 ver / インストール済み ver / 最新 ver / audit
  */
 
-import { ShieldAlert } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { getOutdatedLevel, outdatedColorClass } from "@/lib/version";
-import type { AuditAdvisory } from "@/types";
+import { useAppStore } from "@/store";
+import type { DepType } from "@/types";
+import { ShieldAlert } from "lucide-react";
 
-export interface PackageRowProps {
+interface PackageRowProps {
   name: string;
-  /** package.json に記載されたバージョン指定（^1.2.3 等） */
-  specifiedVersion: string;
-  /** node_modules にインストールされた実バージョン */
-  installedVersion: string | undefined;
-  /** 最新バージョン（undefined = 未取得 or 該当なし） */
-  latestVersion: string | undefined;
-  /** 最新バージョン取得済みかどうか */
-  latestLoaded: boolean;
-  /** このパッケージに関連する audit 脆弱性 */
-  advisories: AuditAdvisory[];
-  /** audit 取得済みかどうか */
-  auditLoaded: boolean;
+  depType: DepType;
 }
 
-function PackageRow({
-  name,
-  specifiedVersion,
-  installedVersion,
-  latestVersion,
-  latestLoaded,
-  advisories,
-  auditLoaded,
-}: PackageRowProps): React.JSX.Element {
-  const latest = latestVersion;
+function PackageRow({ name, depType }: PackageRowProps): React.JSX.Element {
+  // --- データ取得 ---
+  const tab = useAppStore((s) => s.tabs[s.activeTabIndex]);
+  const specifiedVersion = tab?.data?.[depType][name] ?? "";
+  const installedVersion = tab?.data?.installedVersions[name];
+  const latest = tab?.latestVersions?.[name]?.version;
+  const latestLoaded = tab?.latestVersions !== null;
+  const advisories = tab?.audit?.advisories?.filter((a) => a.moduleName === name) ?? [];
+  const auditLoaded = tab?.audit !== null;
+
+  // --- データ加工 ---
   const level = latest && installedVersion ? getOutdatedLevel(installedVersion, latest) : null;
 
+  // --- 描画 ---
   return (
     <div className="flex items-center gap-2 px-3 py-1 text-xs hover:bg-accent/30 rounded">
       {/* パッケージ名 */}

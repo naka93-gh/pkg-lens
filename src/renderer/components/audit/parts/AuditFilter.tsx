@@ -3,8 +3,8 @@
  * ToggleGroup（multiple）で深刻度をトグルする
  */
 
+import { severityConfig } from "@/components/audit/parts/AuditSummaryBar";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { severityConfig } from "@/components/AuditSummaryBar";
 import { cn } from "@/lib/utils";
 import type { Severity } from "@/types";
 

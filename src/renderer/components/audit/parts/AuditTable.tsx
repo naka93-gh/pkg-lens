@@ -5,13 +5,12 @@
 
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import AuditDetailPanel from "@/components/AuditDetailPanel";
+import AuditDetailPanel from "@/components/audit/parts/AuditDetailPanel";
 import { cn } from "@/lib/utils";
 import type { AuditAdvisory, Severity } from "@/types";
 
 interface AuditTableProps {
   advisories: AuditAdvisory[];
-  installedVersions: Record<string, string>;
 }
 
 type SortKey = "severity" | "moduleName" | "title";
@@ -65,16 +64,19 @@ function compare(a: AuditAdvisory, b: AuditAdvisory, key: SortKey, dir: SortDir)
   return dir === "asc" ? result : -result;
 }
 
-function AuditTable({ advisories, installedVersions }: AuditTableProps): React.JSX.Element {
+function AuditTable({ advisories }: AuditTableProps): React.JSX.Element {
+  // --- ローカル状態 ---
   const [sortKey, setSortKey] = useState<SortKey>("severity");
   const [sortDir, setSortDir] = useState<SortDir>("asc");
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
 
+  // --- ソート ---
   const sorted = useMemo(
     () => [...advisories].sort((a, b) => compare(a, b, sortKey, sortDir)),
     [advisories, sortKey, sortDir],
   );
 
+  // --- イベントハンドラ ---
   const handleSort = useCallback(
     (key: SortKey) => {
       if (key === sortKey) {
@@ -99,6 +101,7 @@ function AuditTable({ advisories, installedVersions }: AuditTableProps): React.J
     });
   }, []);
 
+  // --- 描画 ---
   return (
     <div className="flex flex-col">
       {/* ヘッダー */}
@@ -167,12 +170,7 @@ function AuditTable({ advisories, installedVersions }: AuditTableProps): React.J
               </span>
             </button>
 
-            {expanded && (
-              <AuditDetailPanel
-                advisory={adv}
-                installedVersion={installedVersions[adv.moduleName]}
-              />
-            )}
+            {expanded && <AuditDetailPanel advisory={adv} />}
           </div>
         );
       })}

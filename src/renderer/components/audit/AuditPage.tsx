@@ -3,30 +3,35 @@
  * サマリバッジ + フィルタ + 脆弱性テーブル + 空状態/ローディング
  */
 
-import { Loader2, ShieldCheck } from "lucide-react";
-import { useMemo, useState } from "react";
-import AuditFilter from "@/components/AuditFilter";
-import AuditSummaryBar from "@/components/AuditSummaryBar";
-import AuditTable from "@/components/AuditTable";
-import { Skeleton } from "@/components/ui/skeleton";
+import AuditFilter from "@/components/audit/parts/AuditFilter";
+import AuditSummaryBar from "@/components/audit/parts/AuditSummaryBar";
+import AuditTable from "@/components/audit/parts/AuditTable";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAppStore } from "@/store";
 import { refreshAudit } from "@/svc/audit.svc";
 import type { Severity } from "@/types";
+import { Loader2, ShieldCheck } from "lucide-react";
+import { useMemo, useState } from "react";
 
 const defaultFilter: Severity[] = ["critical", "high", "moderate"];
 
 function AuditPage(): React.JSX.Element {
+  // --- データ取得 ---
   const tab = useAppStore((s) => s.tabs[s.activeTabIndex]);
   const audit = tab?.audit;
+
+  // --- ローカル状態 ---
   const [filter, setFilter] = useState<Severity[]>(defaultFilter);
   const [refreshing, setRefreshing] = useState(false);
 
+  // --- フィルタリング ---
   const filtered = useMemo(() => {
     if (!audit) return [];
     return audit.advisories.filter((a) => filter.includes(a.severity));
   }, [audit, filter]);
 
+  // --- イベントハンドラ ---
   const handleRefresh = async (): Promise<void> => {
     setRefreshing(true);
     try {
@@ -36,7 +41,7 @@ function AuditPage(): React.JSX.Element {
     }
   };
 
-  // 未取得（ローディング中）
+  // --- 描画 ---
   if (!audit) {
     return (
       <div className="flex flex-col gap-3">
@@ -92,10 +97,7 @@ function AuditPage(): React.JSX.Element {
               該当する脆弱性はありません
             </div>
           ) : (
-            <AuditTable
-              advisories={filtered}
-              installedVersions={tab.data?.installedVersions ?? {}}
-            />
+            <AuditTable advisories={filtered} />
           )}
         </>
       )}

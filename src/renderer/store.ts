@@ -4,7 +4,7 @@
  */
 
 import { create } from "zustand";
-import type { ProjectData, RegistryPackageMeta, AuditResult, TreeNode } from "./types";
+import type { AuditResult, ProjectData, RegistryPackageMeta, TreeNode } from "./types";
 
 /**
  * プロジェクトタブ1つ分の状態

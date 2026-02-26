@@ -3,11 +3,11 @@
  * タブが 0 個ならウェルカム画面、1 個以上ならタブバー + サブナビ + メインエリアを表示する
  */
 
-import AuditPage from "@/components/AuditPage";
-import PackageListPage from "@/components/PackageListPage";
-import ProjectTabBar from "@/components/ProjectTabBar";
-import SubNav from "@/components/SubNav";
-import TreePage from "@/components/TreePage";
+import AuditPage from "@/components/audit/AuditPage";
+import PackageListPage from "@/components/packages/PackageListPage";
+import ProjectTabBar from "@/components/layout/ProjectTabBar";
+import SubNav from "@/components/layout/SubNav";
+import TreePage from "@/components/tree/TreePage";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import WelcomePage from "@/components/WelcomePage";
 import { useAppStore } from "@/store";

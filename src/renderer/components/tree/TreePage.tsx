@@ -5,13 +5,15 @@
 
 import { Package } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import TreeToolbar, { type TreeDisplayMode } from "@/components/TreeToolbar";
-import TreeView from "@/components/TreeView";
-import { nodeId } from "@/components/TreeNodeItem";
+import { TreeSearchContext } from "@/components/tree/parts/TreeSearchContext";
+import { nodeId } from "@/components/tree/parts/TreeNodeItem";
+import TreeToolbar, { type TreeDisplayMode } from "@/components/tree/parts/TreeToolbar";
+import TreeView from "@/components/tree/parts/TreeView";
 import { useAppStore } from "@/store";
 import type { TreeNode } from "@/types";
 import { useDebounce } from "@/lib/useDebounce";
 
+// TODO: tree/parts/ にヘルパーとして切り出す
 /**
  * ツリーを再帰探索し、名前が query に部分一致するノードのパスを収集する
  * 戻り値: { matched: マッチノード ID, ancestors: 展開すべき祖先 ID }
@@ -57,16 +59,17 @@ function findMatches(
 }
 
 function TreePage(): React.JSX.Element {
+  // --- データ取得 ---
   const tab = useAppStore((s) => s.tabs[s.activeTabIndex]);
   const tree = tab?.tree;
 
+  // --- ローカル状態 ---
   const [searchInput, setSearchInput] = useState("");
   const [displayMode, setDisplayMode] = useState<TreeDisplayMode>("full");
   const debouncedQuery = useDebounce(searchInput, 200);
-
   const isSearching = debouncedQuery.length > 0;
 
-  // 表示するノード（直接依存のみモード → children を空にする）
+  // --- データ加工 ---
   const displayNodes = useMemo(() => {
     if (!tree) return [];
     if (displayMode === "direct") {
@@ -75,7 +78,6 @@ function TreePage(): React.JSX.Element {
     return tree;
   }, [tree, displayMode]);
 
-  // 検索マッチ計算
   const { matched, ancestors, firstMatchId } = useMemo(() => {
     if (!isSearching || displayNodes.length === 0) {
       return { matched: new Set<string>(), ancestors: new Set<string>(), firstMatchId: null };
@@ -85,6 +87,7 @@ function TreePage(): React.JSX.Element {
     return { ...result, firstMatchId: firstId };
   }, [displayNodes, debouncedQuery, isSearching]);
 
+  // --- イベントハンドラ ---
   const handleSearchChange = useCallback((value: string) => {
     setSearchInput(value);
   }, []);
@@ -93,7 +96,12 @@ function TreePage(): React.JSX.Element {
     setDisplayMode(mode);
   }, []);
 
-  // tree が null → 読み込み中
+  const searchCtx = useMemo(
+    () => ({ highlightedIds: matched, expandedIds: ancestors, scrollTargetId: firstMatchId }),
+    [matched, ancestors, firstMatchId],
+  );
+
+  // --- 描画 ---
   if (tree === null || tree === undefined) {
     return (
       <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
@@ -102,7 +110,6 @@ function TreePage(): React.JSX.Element {
     );
   }
 
-  // tree が空配列 → 空状態
   if (tree.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-2 text-muted-foreground">
@@ -114,21 +121,18 @@ function TreePage(): React.JSX.Element {
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      <TreeToolbar
-        searchValue={searchInput}
-        onSearchChange={handleSearchChange}
-        matchCount={isSearching ? matched.size : null}
-        displayMode={displayMode}
-        onDisplayModeChange={handleDisplayModeChange}
-      />
-      <TreeView
-        nodes={displayNodes}
-        highlightedIds={matched}
-        expandedIds={ancestors}
-        scrollTargetId={firstMatchId}
-      />
-    </div>
+    <TreeSearchContext.Provider value={searchCtx}>
+      <div className="flex flex-col gap-3">
+        <TreeToolbar
+          searchValue={searchInput}
+          onSearchChange={handleSearchChange}
+          matchCount={isSearching ? matched.size : null}
+          displayMode={displayMode}
+          onDisplayModeChange={handleDisplayModeChange}
+        />
+        <TreeView nodes={displayNodes} />
+      </div>
+    </TreeSearchContext.Provider>
   );
 }
 

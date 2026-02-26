@@ -3,10 +3,10 @@
  * メインコンテンツ領域のビュー（パッケージ一覧・Audit・依存ツリー・設定）を切り替える
  */
 
-import { Package, ShieldAlert, GitBranch, Settings } from "lucide-react";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-import { useAppStore, type ViewType } from "@/store";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { useAppStore, type ViewType } from "@/store";
+import { GitBranch, Package, Settings, ShieldAlert } from "lucide-react";
 
 // アイコンのみ表示し、ラベルはツールチップで補足する
 const navItems: { view: ViewType; icon: typeof Package; label: string }[] = [
@@ -17,9 +17,11 @@ const navItems: { view: ViewType; icon: typeof Package; label: string }[] = [
 ];
 
 function SubNav(): React.JSX.Element {
+  // --- データ取得 ---
   const activeView = useAppStore((s) => s.activeView);
   const setActiveView = useAppStore((s) => s.setActiveView);
 
+  // --- 描画 ---
   return (
     <div className="layer-subnav flex h-7 shrink-0 items-center gap-1 border-b border-border px-3">
       {navItems.map(({ view, icon: Icon, label }) => {

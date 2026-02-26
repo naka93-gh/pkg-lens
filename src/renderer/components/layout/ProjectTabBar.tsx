@@ -4,15 +4,17 @@
  * macOS ではタイトルバーを兼ねるためドラッグ領域として機能する
  */
 
-import { X, Plus, Loader2 } from "lucide-react";
-import { useAppStore } from "@/store";
-import { closeProject, switchTab, selectAndOpenProject } from "@/svc/project.svc";
 import { cn } from "@/lib/utils";
+import { useAppStore } from "@/store";
+import { closeProject, selectAndOpenProject, switchTab } from "@/svc/project.svc";
+import { Loader2, Plus, X } from "lucide-react";
 
 function ProjectTabBar(): React.JSX.Element {
+  // --- データ取得 ---
   const tabs = useAppStore((s) => s.tabs);
   const activeTabIndex = useAppStore((s) => s.activeTabIndex);
 
+  // --- 描画 ---
   return (
     // タブバー全体を macOS のドラッグ領域にし、子要素の操作部分は no-drag で除外する
     <div className="titlebar-drag layer-tabbar flex h-9 shrink-0 items-end border-b border-border">
