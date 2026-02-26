@@ -9,7 +9,11 @@
     "preview": "electron-vite preview",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json",
-    "typecheck": "npm run typecheck:node && npm run typecheck:web"
+    "typecheck": "npm run typecheck:node && npm run typecheck:web",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write 'src/**/*.{ts,tsx}'",
+    "format:check": "prettier --check 'src/**/*.{ts,tsx}'"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",
@@ -25,14 +29,20 @@
   },
   "devDependencies": {
     "@electron-toolkit/utils": "^4.0.0",
+    "@eslint/js": "^9.39.3",
     "@tailwindcss/vite": "^4.2.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "electron": "^34.0.0",
     "electron-vite": "^5.0.0",
+    "eslint": "^9.39.3",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "prettier": "^3.8.1",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.7.0",
+    "typescript-eslint": "^8.56.1",
     "vite": "^6.0.0"
   }
 }
