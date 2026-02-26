@@ -1,5 +1,6 @@
 import { exec } from "node:child_process";
 import type {
+  AuditAdvisory,
   AuditResult,
   OutdatedEntry,
   RegistryPackage,
@@ -108,16 +109,103 @@ export async function getLatestVersions(
   return result;
 }
 
+/** npm audit --json (v7+) の via 要素（オブジェクト形式） */
+interface NpmAuditVia {
+  source: number;
+  name: string;
+  title: string;
+  severity: string;
+  range: string;
+}
+
+/** npm audit --json (v7+) の vulnerability エントリ */
+interface NpmAuditVulnerability {
+  name: string;
+  severity: string;
+  via: (NpmAuditVia | string)[];
+  effects: string[];
+  range: string;
+  nodes: string[];
+  fixAvailable: boolean | { name: string; version: string };
+}
+
+/** npm audit --json (v7+) のトップレベル */
+interface NpmAuditJson {
+  vulnerabilities: Record<string, NpmAuditVulnerability>;
+  metadata: {
+    vulnerabilities: Record<string, number>;
+    dependencies: Record<string, number>;
+  };
+}
+
+const EMPTY_AUDIT: AuditResult = {
+  advisories: [],
+  metadata: {
+    vulnerabilities: { critical: 0, high: 0, moderate: 0, low: 0, info: 0 },
+    totalDependencies: 0,
+  },
+};
+
 /**
- * npm audit 結果を取得
- * TODO: 未実装
+ * npm audit --json を実行し AuditResult を返す
+ * パースエラーや node_modules 不在時は空結果を返す
  */
-export async function getAudit(_dir: string): Promise<AuditResult> {
+export async function getAudit(dir: string): Promise<AuditResult> {
+  let stdout: string;
+  try {
+    const result = await execAsync("npm audit --json", dir);
+    stdout = result.stdout;
+  } catch {
+    return EMPTY_AUDIT;
+  }
+
+  if (!stdout.trim()) return EMPTY_AUDIT;
+
+  let json: NpmAuditJson;
+  try {
+    json = JSON.parse(stdout) as NpmAuditJson;
+  } catch {
+    return EMPTY_AUDIT;
+  }
+
+  if (!json.vulnerabilities) return EMPTY_AUDIT;
+
+  // via のオブジェクト要素（直接 advisory）を AuditAdvisory に変換
+  const advisories: AuditAdvisory[] = [];
+  for (const vuln of Object.values(json.vulnerabilities)) {
+    const paths = vuln.nodes.map((n) => n.replace(/^node_modules\//, ""));
+    const hasFix = typeof vuln.fixAvailable === "object" ? true : !!vuln.fixAvailable;
+
+    for (const via of vuln.via) {
+      if (typeof via === "string") continue;
+      advisories.push({
+        id: via.source,
+        title: via.title,
+        severity: via.severity as AuditAdvisory["severity"],
+        moduleName: vuln.name,
+        vulnerableVersions: via.range,
+        patchedVersions: hasFix ? "fix available" : "No fix",
+        path: paths,
+      });
+    }
+  }
+
+  // metadata
+  const metaVulns = json.metadata?.vulnerabilities ?? {};
+  const metaDeps = json.metadata?.dependencies ?? {};
+  const totalDependencies = Object.values(metaDeps).reduce((sum, n) => sum + n, 0);
+
   return {
-    advisories: [],
+    advisories,
     metadata: {
-      vulnerabilities: { critical: 0, high: 0, moderate: 0, low: 0, info: 0 },
-      totalDependencies: 0,
+      vulnerabilities: {
+        critical: metaVulns["critical"] ?? 0,
+        high: metaVulns["high"] ?? 0,
+        moderate: metaVulns["moderate"] ?? 0,
+        low: metaVulns["low"] ?? 0,
+        info: metaVulns["info"] ?? 0,
+      },
+      totalDependencies,
     },
   };
 }
