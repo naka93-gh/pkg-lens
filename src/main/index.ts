@@ -4,11 +4,28 @@ import { electronApp, optimizer, is } from "@electron-toolkit/utils";
 import { registerIpcHandlers } from "./ipc";
 
 function createWindow(): BrowserWindow {
+  const isMac = process.platform === "darwin";
+  const isWin = process.platform === "win32";
+
   const win = new BrowserWindow({
     width: 1200,
     height: 800,
     minWidth: 800,
     minHeight: 600,
+    transparent: true,
+    backgroundColor: "#00000000",
+    // macOS: vibrancy ブラー + カスタムタイトルバー
+    ...(isMac && {
+      vibrancy: "under-window" as const,
+      visualEffectState: "active" as const,
+      titleBarStyle: "hiddenInset" as const,
+      trafficLightPosition: { x: 12, y: 12 },
+    }),
+    // Windows 11: Acrylic ブラー
+    ...(isWin && {
+      backgroundMaterial: "acrylic" as const,
+      autoHideMenuBar: true,
+    }),
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
       sandbox: false,
