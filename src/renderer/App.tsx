@@ -3,6 +3,7 @@
  * タブが 0 個ならウェルカム画面、1 個以上ならタブバー + サブナビ + メインエリアを表示する
  */
 
+import AuditPage from "@/components/AuditPage";
 import PackageListPage from "@/components/PackageListPage";
 import ProjectTabBar from "@/components/ProjectTabBar";
 import SubNav from "@/components/SubNav";
@@ -91,6 +92,7 @@ function MainContent({ activeView }: { activeView: ViewType }): React.JSX.Elemen
     case "tree":
       return <TreePage />;
     case "audit":
+      return <AuditPage />;
     case "settings":
       return (
         <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
