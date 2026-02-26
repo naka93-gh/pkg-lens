@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
+import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAppStore } from "@/store";
 import ProjectTabBar from "@/components/ProjectTabBar";
 import SubNav from "@/components/SubNav";
 import WelcomePage from "@/components/WelcomePage";
+import { selectAndOpenProject } from "@/svc/project.svc";
 
 function App(): React.JSX.Element {
   const [active, setActive] = useState(true);
@@ -19,6 +21,18 @@ function App(): React.JSX.Element {
       window.removeEventListener("focus", onFocus);
       window.removeEventListener("blur", onBlur);
     };
+  }, []);
+
+  // Cmd+O / Ctrl+O でプロジェクトを開く
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent): void => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "o") {
+        e.preventDefault();
+        void selectAndOpenProject();
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
   return (
@@ -41,6 +55,16 @@ function App(): React.JSX.Element {
             </>
           )}
         </div>
+        <Toaster
+          theme="dark"
+          toastOptions={{
+            style: {
+              background: "oklch(0.25 0.025 264)",
+              border: "1px solid oklch(0.36 0.03 260)",
+              color: "oklch(0.82 0.03 256)",
+            },
+          }}
+        />
       </div>
     </TooltipProvider>
   );

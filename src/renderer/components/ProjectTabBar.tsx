@@ -1,7 +1,6 @@
-import { X, Plus } from "lucide-react";
+import { X, Plus, Loader2 } from "lucide-react";
 import { useAppStore } from "@/store";
-import { closeProject, switchTab } from "@/svc/project.svc";
-import { selectAndOpenProject } from "@/svc/project.svc";
+import { closeProject, switchTab, selectAndOpenProject } from "@/svc/project.svc";
 import { cn } from "@/lib/utils";
 
 function ProjectTabBar(): React.JSX.Element {
@@ -31,9 +30,13 @@ function ProjectTabBar(): React.JSX.Element {
                   : "text-muted-foreground hover:text-foreground",
               )}
             >
-              {/* dirty マーク */}
-              {tab.dirty && (
-                <span className="text-tn-warning text-[10px]">●</span>
+              {/* ローディング / dirty マーク */}
+              {tab.loading ? (
+                <Loader2 className="size-3 animate-spin text-muted-foreground" />
+              ) : (
+                tab.dirty && (
+                  <span className="text-[10px] text-tn-warning">●</span>
+                )
               )}
 
               {/* タブ名 */}
