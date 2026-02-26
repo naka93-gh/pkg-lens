@@ -124,10 +124,48 @@ export async function getAudit(_dir: string): Promise<AuditResult> {
 
 /**
  * 依存ツリーを取得
- * TODO: 未実装
+ * @npmcli/arborist で node_modules を読み取り TreeNode[] に変換する
  */
-export async function getDependencyTree(_dir: string): Promise<TreeNode[]> {
-  return [];
+export async function getDependencyTree(dir: string): Promise<TreeNode[]> {
+  const Arborist = (await import("@npmcli/arborist")).default;
+  const arb = new Arborist({ path: dir });
+
+  let root: Awaited<ReturnType<typeof arb.loadActual>>;
+  try {
+    root = await arb.loadActual();
+  } catch {
+    // node_modules が存在しない場合など
+    return [];
+  }
+
+  const visited = new Set<string>();
+
+  function toTreeNode(node: typeof root): TreeNode {
+    const key = `${node.name}@${node.version}`;
+    if (visited.has(key)) {
+      return { name: node.name ?? "", version: node.version ?? "", children: [] };
+    }
+    visited.add(key);
+
+    const children: TreeNode[] = [];
+    for (const edge of node.edgesOut.values()) {
+      if (edge.to) {
+        children.push(toTreeNode(edge.to));
+      }
+    }
+
+    visited.delete(key);
+    return { name: node.name ?? "", version: node.version ?? "", children };
+  }
+
+  const result: TreeNode[] = [];
+  for (const edge of root.edgesOut.values()) {
+    if (edge.to) {
+      result.push(toTreeNode(edge.to));
+    }
+  }
+
+  return result;
 }
 
 /**

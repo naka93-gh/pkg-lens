@@ -5,7 +5,7 @@
 import { toast } from "sonner";
 import * as api from "../lib/api";
 import { useAppStore } from "../store";
-import type { ProjectData, RegistryPackageMeta, AuditResult } from "../types";
+import type { ProjectData, RegistryPackageMeta, AuditResult, TreeNode } from "../types";
 
 /**
  * プロジェクトを開き、loadProject → outdated → audit を段階的に取得してタブに反映
@@ -55,16 +55,18 @@ export async function openProject(dir: string): Promise<void> {
   ];
   const { registryUrl } = store.getState();
 
-  const [latestVersions, audit] = await Promise.all([
+  const [latestVersions, audit, tree] = await Promise.all([
     (
       api.getLatestVersions(allNames, registryUrl) as Promise<Record<string, RegistryPackageMeta>>
     ).catch(() => null),
     (api.getAudit(dir) as Promise<AuditResult>).catch(() => null),
+    (api.getDependencyTree(dir) as Promise<TreeNode[]>).catch(() => null),
   ]);
 
   store.getState().updateTab(tabIndex, {
     ...(latestVersions !== null ? { latestVersions } : {}),
     ...(audit !== null ? { audit } : {}),
+    ...(tree !== null ? { tree } : {}),
   });
 }
 

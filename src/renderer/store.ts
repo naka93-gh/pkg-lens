@@ -14,7 +14,7 @@ export interface ProjectTab {
   data: ProjectData | null;
   latestVersions: Record<string, RegistryPackageMeta> | null;
   audit: AuditResult | null;
-  tree: TreeNode | null;
+  tree: TreeNode[] | null;
   dirty: boolean;
   loading: boolean;
 }

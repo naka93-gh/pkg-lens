@@ -14,6 +14,6 @@ export async function loadTree(depth?: number): Promise<void> {
   const tab = tabs[activeTabIndex];
   if (!tab) return;
 
-  const tree = (await api.getDependencyTree(tab.dir, depth)) as TreeNode;
+  const tree = (await api.getDependencyTree(tab.dir, depth)) as TreeNode[];
   useAppStore.getState().updateTab(activeTabIndex, { tree });
 }

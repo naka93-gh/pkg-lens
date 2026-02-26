@@ -6,6 +6,7 @@
 import PackageListPage from "@/components/PackageListPage";
 import ProjectTabBar from "@/components/ProjectTabBar";
 import SubNav from "@/components/SubNav";
+import TreePage from "@/components/TreePage";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import WelcomePage from "@/components/WelcomePage";
 import { useAppStore } from "@/store";
@@ -87,8 +88,9 @@ function MainContent({ activeView }: { activeView: ViewType }): React.JSX.Elemen
   switch (activeView) {
     case "packages":
       return <PackageListPage />;
-    case "audit":
     case "tree":
+      return <TreePage />;
+    case "audit":
     case "settings":
       return (
         <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
