@@ -139,7 +139,12 @@ body,
   background: transparent !important;
 }
 
-/* 透過レイヤー */
+/*
+ * 透過レイヤー
+ * ウィンドウ全体が transparent なので、各領域に薄い背景色を重ねて
+ * デスクトップの壁紙が程よく透けるようにする。
+ * 不透明度が高い順: タブバー/サブナビ > メイン > カード
+ */
 .layer-tabbar,
 .layer-subnav {
   background: oklch(0.205 0.03 264 / 0.15); /* #1a1b26 @ 15% */
@@ -153,7 +158,12 @@ body,
   background: oklch(0.235 0.025 264 / 0.1); /* #24283b @ 10% */
 }
 
-/* macOS タイトルバー非表示時のドラッグ領域 */
+/*
+ * macOS ドラッグ領域
+ * titleBarStyle: "hiddenInset" でネイティブタイトルバーを消しているため、
+ * タブバーをドラッグ可能にしてウィンドウ移動を実現する。
+ * ボタン等の操作要素には no-drag を付けてクリックを有効にする。
+ */
 .titlebar-drag {
   -webkit-app-region: drag;
 }
@@ -162,7 +172,7 @@ body,
   -webkit-app-region: no-drag;
 }
 
-/* 非アクティブウィンドウ時の減光 */
+/* ウィンドウが非フォーカス時に全体を減光して背面にいることを視覚的に伝える */
 .app-container {
   transition: opacity 0.15s ease;
 }

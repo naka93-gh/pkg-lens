@@ -1,3 +1,8 @@
+/**
+ * アプリ全体の状態管理（Zustand）
+ * 複数プロジェクトのタブ管理・アクティブビュー・設定を保持する
+ */
+
 import { create } from "zustand";
 import type {
   ProjectData,
@@ -6,7 +11,9 @@ import type {
   TreeNode,
 } from "./types";
 
-/** プロジェクトタブ1つ分の状態 */
+/**
+ * プロジェクトタブ1つ分の状態
+ */
 export interface ProjectTab {
   dir: string;
   data: ProjectData | null;
@@ -17,8 +24,14 @@ export interface ProjectTab {
   loading: boolean;
 }
 
+/**
+ * サブナビで切り替えるビューの種別
+ */
 export type ViewType = "packages" | "audit" | "tree" | "settings";
 
+/**
+ * アプリの状態
+ */
 export interface AppState {
   tabs: ProjectTab[];
   activeTabIndex: number;
@@ -27,6 +40,9 @@ export interface AppState {
   theme: "light" | "dark";
 }
 
+/**
+ * 状態を変更するアクション
+ */
 export interface AppActions {
   addTab: (tab: ProjectTab) => void;
   removeTab: (index: number) => void;
@@ -39,17 +55,20 @@ export interface AppActions {
 
 export const useAppStore = create<AppState & AppActions>()((set) => ({
   tabs: [],
+  // -1 = タブなし。0 以上でアクティブタブを示す
   activeTabIndex: -1,
   activeView: "packages",
   registryUrl: "https://registry.npmjs.org",
   theme: "dark",
 
+  // 追加したタブを即アクティブにする（s.tabs.length が追加後のインデックス）
   addTab: (tab) =>
     set((s) => ({
       tabs: [...s.tabs, tab],
       activeTabIndex: s.tabs.length,
     })),
 
+  // 削除後にアクティブインデックスが範囲外になる場合は末尾に補正
   removeTab: (index) =>
     set((s) => {
       const tabs = s.tabs.filter((_, i) => i !== index);

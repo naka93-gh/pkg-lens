@@ -1,7 +1,11 @@
-/** パッケージの依存先種別 */
+/**
+ * パッケージの依存先種別
+ */
 export type DepType = "dependencies" | "devDependencies" | "peerDependencies";
 
-/** loadProject の戻り値 */
+/**
+ * loadProject の戻り値
+ */
 export interface ProjectData {
   name: string;
   version: string;
@@ -10,7 +14,9 @@ export interface ProjectData {
   peerDependencies: Record<string, string>;
 }
 
-/** outdated 1件 */
+/**
+ * outdated 1件
+ */
 export interface OutdatedEntry {
   name: string;
   current: string;
@@ -18,10 +24,14 @@ export interface OutdatedEntry {
   latest: string;
 }
 
-/** audit 脆弱性の深刻度 */
+/**
+ * audit 脆弱性の深刻度
+ */
 export type Severity = "critical" | "high" | "moderate" | "low" | "info";
 
-/** audit 脆弱性 1件 */
+/**
+ * audit 脆弱性 1件
+ */
 export interface AuditAdvisory {
   id: number;
   title: string;
@@ -32,7 +42,9 @@ export interface AuditAdvisory {
   path: string[];
 }
 
-/** audit 結果 */
+/**
+ * audit 結果
+ */
 export interface AuditResult {
   advisories: AuditAdvisory[];
   metadata: {
@@ -41,14 +53,18 @@ export interface AuditResult {
   };
 }
 
-/** 依存ツリーのノード */
+/**
+ * 依存ツリーのノード
+ */
 export interface TreeNode {
   name: string;
   version: string;
   children: TreeNode[];
 }
 
-/** レジストリ検索結果の1件 */
+/**
+ * レジストリ検索結果の1件
+ */
 export interface RegistryPackage {
   name: string;
   version: string;

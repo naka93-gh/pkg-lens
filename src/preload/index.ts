@@ -1,3 +1,7 @@
+/**
+ * preload スクリプト — renderer に公開する IPC ブリッジ
+ * renderer から直接 ipcRenderer を触れないため、contextBridge 経由で安全に公開する
+ */
 import { contextBridge, ipcRenderer } from "electron";
 
 const api = {

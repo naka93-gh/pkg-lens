@@ -1,16 +1,22 @@
 import type {
-  OutdatedEntry,
   AuditResult,
-  TreeNode,
+  OutdatedEntry,
   RegistryPackage,
+  TreeNode,
 } from "../../shared/types";
 
-/** npm outdated 情報を取得（フェーズ 2 で実装） */
+/**
+ * npm outdated 情報を取得
+ * TODO: 未実装
+ */
 export async function getOutdated(_dir: string): Promise<OutdatedEntry[]> {
   return [];
 }
 
-/** npm audit 結果を取得（フェーズ 2 で実装） */
+/**
+ * npm audit 結果を取得
+ * TODO: 未実装
+ */
 export async function getAudit(_dir: string): Promise<AuditResult> {
   return {
     advisories: [],
@@ -21,12 +27,18 @@ export async function getAudit(_dir: string): Promise<AuditResult> {
   };
 }
 
-/** 依存ツリーを取得（フェーズ 3 で実装） */
+/**
+ * 依存ツリーを取得
+ * TODO: 未実装
+ */
 export async function getDependencyTree(_dir: string): Promise<TreeNode[]> {
   return [];
 }
 
-/** npm レジストリを検索（フェーズ 2 で実装） */
-export async function searchRegistry(_query: string): Promise<RegistryPackage[]> {
+/**
+ * npm レジストリを検索
+ * TODO: 未実装
+ */
+export async function searchRegistry(_q: string): Promise<RegistryPackage[]> {
   return [];
 }

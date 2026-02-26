@@ -8,7 +8,9 @@ import {
 } from "./svc/npm.svc";
 import { selectDirectory } from "./svc/dialog.svc";
 
-/** すべての IPC ハンドラを登録する */
+/**
+ * すべての IPC ハンドラを登録する
+ */
 export function registerIpcHandlers(): void {
   ipcMain.handle("load-project", (_e, dir: string) => loadProject(dir));
   ipcMain.handle("save-package-json", (_e, dir, data) =>

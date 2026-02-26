@@ -1,17 +1,23 @@
-import { useEffect, useState } from "react";
-import { Toaster } from "sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { useAppStore } from "@/store";
+/**
+ * ルートコンポーネント
+ * タブが 0 個ならウェルカム画面、1 個以上ならタブバー + サブナビ + メインエリアを表示する
+ */
+
 import ProjectTabBar from "@/components/ProjectTabBar";
 import SubNav from "@/components/SubNav";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import WelcomePage from "@/components/WelcomePage";
+import { useAppStore } from "@/store";
 import { selectAndOpenProject } from "@/svc/project.svc";
+import { useEffect, useState } from "react";
+import { Toaster } from "sonner";
 
 function App(): React.JSX.Element {
   const [active, setActive] = useState(true);
   const tabs = useAppStore((s) => s.tabs);
   const hasTabs = tabs.length > 0;
 
+  // ウィンドウフォーカス状態を追跡し、非アクティブ時に CSS で減光する
   useEffect(() => {
     const onFocus = (): void => setActive(true);
     const onBlur = (): void => setActive(false);
@@ -44,7 +50,7 @@ function App(): React.JSX.Element {
               <ProjectTabBar />
               <SubNav />
               <main className="flex-1 overflow-auto p-4">
-                {/* フェーズ 2 でコンテンツを実装 */}
+                {/* TODO: でコンテンツを実装 */}
               </main>
             </>
           ) : (
@@ -55,6 +61,7 @@ function App(): React.JSX.Element {
             </>
           )}
         </div>
+        {/* sonner のデフォルトスタイルは白背景なので上書き */}
         <Toaster
           theme="dark"
           toastOptions={{

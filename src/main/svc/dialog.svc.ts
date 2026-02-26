@@ -1,7 +1,10 @@
 import { BrowserWindow, dialog } from "electron";
 
-/** ディレクトリ選択ダイアログを開く */
+/**
+ * ディレクトリ選択ダイアログを開く
+ */
 export async function selectDirectory(): Promise<string | null> {
+  // macOS ではウィンドウを渡すとシートダイアログとして表示される
   const win = BrowserWindow.getFocusedWindow();
   const opts: Electron.OpenDialogOptions = {
     properties: ["openDirectory"],

@@ -1,3 +1,8 @@
+/**
+ * ウェルカム画面
+ * タブが 0 個のときに表示する。プロジェクトを開くための導線を提供する
+ */
+
 import { Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { selectAndOpenProject } from "@/svc/project.svc";

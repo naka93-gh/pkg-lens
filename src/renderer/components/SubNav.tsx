@@ -1,3 +1,8 @@
+/**
+ * サブナビゲーション
+ * メインコンテンツ領域のビュー（パッケージ一覧・Audit・依存ツリー・設定）を切り替える
+ */
+
 import { Package, ShieldAlert, GitBranch, Settings } from "lucide-react";
 import {
   Tooltip,
@@ -7,6 +12,7 @@ import {
 import { useAppStore, type ViewType } from "@/store";
 import { cn } from "@/lib/utils";
 
+// アイコンのみ表示し、ラベルはツールチップで補足する
 const navItems: { view: ViewType; icon: typeof Package; label: string }[] = [
   { view: "packages", icon: Package, label: "パッケージ一覧" },
   { view: "audit", icon: ShieldAlert, label: "Audit" },
@@ -35,6 +41,7 @@ function SubNav(): React.JSX.Element {
                     : "text-muted-foreground hover:text-foreground",
                 )}
               >
+                {/* アクティブ時は線を太くして選択状態を強調 */}
                 <Icon className="size-3.5" strokeWidth={isActive ? 2.5 : 2} />
               </button>
             </TooltipTrigger>

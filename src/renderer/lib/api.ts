@@ -1,6 +1,12 @@
-/** renderer → main プロセスへの IPC 呼び出しレイヤー */
+/**
+ * renderer → main プロセスへの IPC 呼び出しレイヤー
+ * コンポーネントから直接 window.electronApi を参照しないよう、ここで一元化する
+ */
 
-function getApi() {
+/**
+ * preload で公開された API を取得。テスト環境など electronApi がない場合はエラー
+ */
+function getApi(): Window["electronApi"] {
   if (!window.electronApi) {
     throw new Error("electronApi is not available");
   }

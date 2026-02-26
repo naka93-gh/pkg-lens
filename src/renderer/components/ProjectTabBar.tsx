@@ -1,3 +1,9 @@
+/**
+ * プロジェクトタブバー
+ * フラットタブの表示・切替・閉じるボタン・[+] による新規追加を担当する
+ * macOS ではタイトルバーを兼ねるためドラッグ領域として機能する
+ */
+
 import { X, Plus, Loader2 } from "lucide-react";
 import { useAppStore } from "@/store";
 import { closeProject, switchTab, selectAndOpenProject } from "@/svc/project.svc";
@@ -8,14 +14,16 @@ function ProjectTabBar(): React.JSX.Element {
   const activeTabIndex = useAppStore((s) => s.activeTabIndex);
 
   return (
+    // タブバー全体を macOS のドラッグ領域にし、子要素の操作部分は no-drag で除外する
     <div className="titlebar-drag layer-tabbar flex h-9 shrink-0 items-end border-b border-border">
-      {/* macOS トラフィックライト分のスペーサー */}
+      {/* macOS のトラフィックライト（● ○ ○）と被らないようにスペースを確保 */}
       <div className="w-20 shrink-0" />
 
       {/* タブ一覧 */}
       <div className="flex min-w-0 flex-1 items-end gap-0">
         {tabs.map((tab, index) => {
           const isActive = index === activeTabIndex;
+          // 読み込み完了前は package.json の name がないのでディレクトリ名で代替
           const name = tab.data?.name ?? tab.dir.split("/").pop() ?? "untitled";
 
           return (
@@ -42,11 +50,12 @@ function ProjectTabBar(): React.JSX.Element {
               {/* タブ名 */}
               <span className="truncate font-mono">{name}</span>
 
-              {/* 閉じるボタン（ホバー時のみ表示） */}
+              {/* 閉じるボタン（ホバー時のみ表示、普段は非表示でスッキリ見せる） */}
               <span
                 role="button"
                 tabIndex={-1}
                 onClick={(e) => {
+                  // タブ切替が発火しないようにバブリングを止める
                   e.stopPropagation();
                   closeProject(index);
                 }}
