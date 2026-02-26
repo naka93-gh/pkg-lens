@@ -6,14 +6,12 @@ import type {
   RegistryPackageMeta,
   TreeNode,
 } from "../../shared/types";
+import { isExpired, loadRegistryCache, saveRegistryCache } from "./cache.svc";
 
 /**
  * exec を Promise 化（stdout/stderr を返す）
  */
-function execAsync(
-  cmd: string,
-  cwd: string,
-): Promise<{ stdout: string; stderr: string }> {
+function execAsync(cmd: string, cwd: string): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
     exec(cmd, { cwd, maxBuffer: 10 * 1024 * 1024 }, (err, stdout, stderr) => {
       if (err) {
@@ -39,10 +37,8 @@ export async function getOutdated(dir: string): Promise<OutdatedEntry[]> {
   const { stdout } = await execAsync("npm outdated --json", dir);
   if (!stdout.trim()) return [];
 
-  const json: Record<
-    string,
-    { current?: string; wanted?: string; latest?: string }
-  > = JSON.parse(stdout);
+  const json: Record<string, { current?: string; wanted?: string; latest?: string }> =
+    JSON.parse(stdout);
 
   return Object.entries(json).map(([name, info]) => ({
     name,
@@ -54,25 +50,43 @@ export async function getOutdated(dir: string): Promise<OutdatedEntry[]> {
 
 /**
  * registry API から最新バージョンを一括取得する
+ * ディスクキャッシュ（TTL 12h）を利用し、未キャッシュ分のみフェッチする
  * 同時実行数を制限し、個別失敗は結果に含めない（部分成功を許容）
  */
 export async function getLatestVersions(
   names: string[],
   registryUrl: string,
 ): Promise<Record<string, RegistryPackageMeta>> {
-  const concurrency = 10;
+  const cache = await loadRegistryCache();
   const result: Record<string, RegistryPackageMeta> = {};
+
+  // キャッシュヒット分と未キャッシュ分を分類
+  const uncached: string[] = [];
+  for (const name of names) {
+    const entry = cache[name];
+    if (entry && !isExpired(entry)) {
+      result[name] = entry.data;
+    } else {
+      uncached.push(name);
+    }
+  }
+
+  if (uncached.length === 0) return result;
+
+  // 未キャッシュ分のみ registry API をフェッチ
+  const concurrency = 10;
+  const fetched: Record<string, RegistryPackageMeta> = {};
   let cursor = 0;
 
   async function next(): Promise<void> {
-    while (cursor < names.length) {
-      const name = names[cursor++];
+    while (cursor < uncached.length) {
+      const name = uncached[cursor++];
       try {
         const res = await fetch(`${registryUrl}/${name}/latest`);
         if (!res.ok) continue;
         const json = (await res.json()) as RegistryPackageMeta;
         if (json.version) {
-          result[name] = json;
+          fetched[name] = json;
         }
       } catch {
         // 個別失敗は無視
@@ -80,11 +94,17 @@ export async function getLatestVersions(
     }
   }
 
-  const workers = Array.from(
-    { length: Math.min(concurrency, names.length) },
-    () => next(),
-  );
+  const workers = Array.from({ length: Math.min(concurrency, uncached.length) }, () => next());
   await Promise.all(workers);
+
+  // フェッチ結果をキャッシュに追加して保存
+  const now = Date.now();
+  for (const [name, data] of Object.entries(fetched)) {
+    cache[name] = { data, cachedAt: now };
+    result[name] = data;
+  }
+  await saveRegistryCache(cache);
+
   return result;
 }
 
