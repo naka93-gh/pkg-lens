@@ -33,18 +33,14 @@ function ProjectTabBar(): React.JSX.Element {
               onClick={() => switchTab(index)}
               className={cn(
                 "titlebar-no-drag group relative flex h-8 max-w-48 items-center gap-1.5 px-3 text-xs transition-colors",
-                isActive
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
+                isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground",
               )}
             >
               {/* ローディング / dirty マーク */}
               {tab.loading ? (
                 <Loader2 className="size-3 animate-spin text-muted-foreground" />
               ) : (
-                tab.dirty && (
-                  <span className="text-[10px] text-tn-warning">●</span>
-                )
+                tab.dirty && <span className="text-[10px] text-tn-warning">●</span>
               )}
 
               {/* タブ名 */}
@@ -71,9 +67,7 @@ function ProjectTabBar(): React.JSX.Element {
               </span>
 
               {/* アクティブ下線 */}
-              {isActive && (
-                <span className="absolute inset-x-0 bottom-0 h-0.5 bg-primary" />
-              )}
+              {isActive && <span className="absolute inset-x-0 bottom-0 h-0.5 bg-primary" />}
             </button>
           );
         })}

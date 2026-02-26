@@ -14,8 +14,7 @@ const api = {
     ipcRenderer.invoke("get-dependency-tree", dir, depth),
   savePackageJson: (dir: string, data: unknown) =>
     ipcRenderer.invoke("save-package-json", dir, data),
-  searchRegistry: (query: string) =>
-    ipcRenderer.invoke("search-registry", query),
+  searchRegistry: (query: string) => ipcRenderer.invoke("search-registry", query),
   selectDirectory: () => ipcRenderer.invoke("select-directory"),
 };
 

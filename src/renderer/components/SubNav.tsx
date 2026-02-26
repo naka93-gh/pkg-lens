@@ -4,11 +4,7 @@
  */
 
 import { Package, ShieldAlert, GitBranch, Settings } from "lucide-react";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { useAppStore, type ViewType } from "@/store";
 import { cn } from "@/lib/utils";
 
@@ -36,9 +32,7 @@ function SubNav(): React.JSX.Element {
                 onClick={() => setActiveView(view)}
                 className={cn(
                   "flex size-5 items-center justify-center rounded transition-colors",
-                  isActive
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground",
+                  isActive ? "text-primary" : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 {/* アクティブ時は線を太くして選択状態を強調 */}

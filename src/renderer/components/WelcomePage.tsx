@@ -26,8 +26,8 @@ function WelcomePage(): React.JSX.Element {
       <p className="text-xs text-muted-foreground">
         <kbd className="rounded border border-border bg-secondary px-1.5 py-0.5 font-mono text-[10px]">
           ⌘O
-        </kbd>
-        {" "}でも開けます
+        </kbd>{" "}
+        でも開けます
       </p>
     </div>
   );

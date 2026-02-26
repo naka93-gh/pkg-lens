@@ -35,10 +35,7 @@ function PackageRow({
   auditLoaded,
 }: PackageRowProps): React.JSX.Element {
   const latest = latestVersion;
-  const level =
-    latest && installedVersion
-      ? getOutdatedLevel(installedVersion, latest)
-      : null;
+  const level = latest && installedVersion ? getOutdatedLevel(installedVersion, latest) : null;
 
   return (
     <div className="flex items-center gap-2 px-3 py-1 text-xs hover:bg-accent/30 rounded">

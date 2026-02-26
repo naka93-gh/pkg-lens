@@ -10,7 +10,10 @@ export type OutdatedLevel = "major" | "minor" | "patch" | "upToDate";
 export function getOutdatedLevel(current: string, latest: string): OutdatedLevel {
   // semver プレフィクス（^, ~, >= 等）を除去して数値部分だけ取得
   const parse = (v: string): number[] =>
-    v.replace(/^[^\d]*/, "").split(".").map(Number);
+    v
+      .replace(/^[^\d]*/, "")
+      .split(".")
+      .map(Number);
 
   const c = parse(current);
   const l = parse(latest);

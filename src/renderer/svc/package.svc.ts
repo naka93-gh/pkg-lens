@@ -19,11 +19,7 @@ function getActiveTab() {
 /**
  * パッケージのバージョンを変更
  */
-export function changeVersion(
-  name: string,
-  depType: DepType,
-  version: string,
-): void {
+export function changeVersion(name: string, depType: DepType, version: string): void {
   const active = getActiveTab();
   if (!active?.tab.data) return;
 
@@ -37,11 +33,7 @@ export function changeVersion(
 /**
  * パッケージを追加
  */
-export function addPackage(
-  name: string,
-  version: string,
-  depType: DepType,
-): void {
+export function addPackage(name: string, version: string, depType: DepType): void {
   const active = getActiveTab();
   if (!active?.tab.data) return;
 

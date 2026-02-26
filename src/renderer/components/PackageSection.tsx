@@ -4,11 +4,7 @@
  */
 
 import { ChevronRight } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import PackageRow from "@/components/PackageRow";
 import { cn } from "@/lib/utils";
 import type { AuditAdvisory, RegistryPackageMeta } from "@/types";
@@ -43,9 +39,7 @@ function PackageSection({
 
   // フィルタ適用
   const names = Object.keys(packages).sort();
-  const filtered = isSearching
-    ? names.filter((n) => n.toLowerCase().includes(query))
-    : names;
+  const filtered = isSearching ? names.filter((n) => n.toLowerCase().includes(query)) : names;
 
   // パッケージが 0 件ならセクションごと非表示
   if (filtered.length === 0) return null;
@@ -66,13 +60,9 @@ function PackageSection({
   return (
     <Collapsible open={isOpen} onOpenChange={setOpen}>
       <CollapsibleTrigger className="flex w-full items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors">
-        <ChevronRight
-          className={cn("size-3.5 transition-transform", isOpen && "rotate-90")}
-        />
+        <ChevronRight className={cn("size-3.5 transition-transform", isOpen && "rotate-90")} />
         {title}
-        <span className="ml-1 font-normal text-muted-foreground/60">
-          ({filtered.length})
-        </span>
+        <span className="ml-1 font-normal text-muted-foreground/60">({filtered.length})</span>
       </CollapsibleTrigger>
       <CollapsibleContent>
         {/* ヘッダー行 */}

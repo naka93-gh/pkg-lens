@@ -57,9 +57,7 @@ export async function openProject(dir: string): Promise<void> {
 
   const [latestVersions, audit] = await Promise.all([
     (
-      api.getLatestVersions(allNames, registryUrl) as Promise<
-        Record<string, RegistryPackageMeta>
-      >
+      api.getLatestVersions(allNames, registryUrl) as Promise<Record<string, RegistryPackageMeta>>
     ).catch(() => null),
     (api.getAudit(dir) as Promise<AuditResult>).catch(() => null),
   ]);

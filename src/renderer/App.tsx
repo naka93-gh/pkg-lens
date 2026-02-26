@@ -83,11 +83,7 @@ function App(): React.JSX.Element {
 /**
  * activeView に応じてメインコンテンツを切り替える
  */
-function MainContent({
-  activeView,
-}: {
-  activeView: ViewType;
-}): React.JSX.Element {
+function MainContent({ activeView }: { activeView: ViewType }): React.JSX.Element {
   switch (activeView) {
     case "packages":
       return <PackageListPage />;

@@ -5,9 +5,7 @@ import type { ProjectData } from "../../shared/types";
 /**
  * package-lock.json の packages フィールドからインストール済みバージョンを抽出
  */
-function parseInstalledVersions(
-  lockRaw: string,
-): Record<string, string> {
+function parseInstalledVersions(lockRaw: string): Record<string, string> {
   const lock = JSON.parse(lockRaw);
   const packages: Record<string, { version?: string }> = lock.packages ?? {};
   const result: Record<string, string> = {};
@@ -55,10 +53,7 @@ export async function loadProject(dir: string): Promise<ProjectData> {
 /**
  * ProjectData を package.json に書き戻す
  */
-export async function savePackageJson(
-  dir: string,
-  data: ProjectData,
-): Promise<void> {
+export async function savePackageJson(dir: string, data: ProjectData): Promise<void> {
   const filePath = join(dir, "package.json");
 
   // 既存の package.json を読み直してマージする（scripts 等の管理外フィールドを消さないため）

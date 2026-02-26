@@ -11,9 +11,7 @@ export async function selectDirectory(): Promise<string | null> {
     title: "プロジェクトフォルダを選択",
   };
 
-  const result = win
-    ? await dialog.showOpenDialog(win, opts)
-    : await dialog.showOpenDialog(opts);
+  const result = win ? await dialog.showOpenDialog(win, opts) : await dialog.showOpenDialog(opts);
 
   if (result.canceled || result.filePaths.length === 0) return null;
   return result.filePaths[0];
