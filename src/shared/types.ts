@@ -12,6 +12,7 @@ export interface ProjectData {
   dependencies: Record<string, string>;
   devDependencies: Record<string, string>;
   peerDependencies: Record<string, string>;
+  installedVersions: Record<string, string>;
 }
 
 /**
@@ -60,6 +61,31 @@ export interface TreeNode {
   name: string;
   version: string;
   children: TreeNode[];
+}
+
+/**
+ * registry /<pkg>/latest のレスポンス
+ * 主要フィールドのみ型付け。実行時には registry が返す全フィールドが保持される
+ */
+export interface RegistryPackageMeta {
+  name: string;
+  version: string;
+  description?: string;
+  license?: string;
+  keywords?: string[];
+  homepage?: string;
+  repository?: { type?: string; url?: string; directory?: string };
+  bugs?: { url?: string };
+  maintainers?: { name: string; email?: string }[];
+  engines?: Record<string, string>;
+  dist?: {
+    tarball: string;
+    shasum: string;
+    integrity?: string;
+    fileCount?: number;
+    unpackedSize?: number;
+  };
+  [key: string]: unknown;
 }
 
 /**

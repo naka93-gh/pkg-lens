@@ -11,5 +11,6 @@ export type {
   AuditAdvisory,
   AuditResult,
   TreeNode,
+  RegistryPackageMeta,
   RegistryPackage,
 } from "../shared/types";

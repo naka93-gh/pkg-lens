@@ -5,13 +5,12 @@
 import { toast } from "sonner";
 import * as api from "../lib/api";
 import { useAppStore } from "../store";
-import type { ProjectData, OutdatedEntry, AuditResult } from "../types";
+import type { ProjectData, RegistryPackageMeta, AuditResult } from "../types";
 
 /**
- * プロジェクトを開き、outdated / audit を並列取得してタブに反映
+ * プロジェクトを開き、loadProject → outdated → audit を段階的に取得してタブに反映
  */
 export async function openProject(dir: string): Promise<void> {
-  // React Hook ではなく Zustand インスタンスを直接参照（コンポーネント外から呼ぶため）
   const store = useAppStore;
   const { tabs } = store.getState();
 
@@ -26,7 +25,7 @@ export async function openProject(dir: string): Promise<void> {
   store.getState().addTab({
     dir,
     data: null,
-    outdated: [],
+    latestVersions: null,
     audit: null,
     tree: null,
     dirty: false,
@@ -35,27 +34,40 @@ export async function openProject(dir: string): Promise<void> {
 
   const tabIndex = store.getState().tabs.length - 1;
 
+  // 1. loadProject — これが失敗したらタブを消す
+  let data: ProjectData;
   try {
-    // 3 つの取得を並列実行して初期表示を高速化する
-    const [data, outdated, audit] = await Promise.all([
-      api.loadProject(dir) as Promise<ProjectData>,
-      api.getOutdated(dir) as Promise<OutdatedEntry[]>,
-      api.getAudit(dir) as Promise<AuditResult>,
-    ]);
-
-    store.getState().updateTab(tabIndex, {
-      data,
-      outdated,
-      audit,
-      loading: false,
-    });
+    data = (await api.loadProject(dir)) as ProjectData;
   } catch {
-    // package.json がない等で読み込み不可→タブを消してトーストで通知
     store.getState().removeTab(tabIndex);
-    toast.error("package.json が見つかりません", {
-      description: dir,
-    });
+    toast.error("package.json が見つかりません", { description: dir });
+    return;
   }
+
+  // テーブル即座描画（パッケージ名・指定ver・インストール済みver）
+  store.getState().updateTab(tabIndex, { data, loading: false });
+
+  // 2. latestVersions / audit を並列取得（個別 catch で失敗を握りつぶす）
+  const allNames = [
+    ...Object.keys(data.dependencies),
+    ...Object.keys(data.devDependencies),
+    ...Object.keys(data.peerDependencies),
+  ];
+  const { registryUrl } = store.getState();
+
+  const [latestVersions, audit] = await Promise.all([
+    (
+      api.getLatestVersions(allNames, registryUrl) as Promise<
+        Record<string, RegistryPackageMeta>
+      >
+    ).catch(() => null),
+    (api.getAudit(dir) as Promise<AuditResult>).catch(() => null),
+  ]);
+
+  store.getState().updateTab(tabIndex, {
+    ...(latestVersions !== null ? { latestVersions } : {}),
+    ...(audit !== null ? { audit } : {}),
+  });
 }
 
 /**

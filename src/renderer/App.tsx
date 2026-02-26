@@ -3,11 +3,13 @@
  * タブが 0 個ならウェルカム画面、1 個以上ならタブバー + サブナビ + メインエリアを表示する
  */
 
+import PackageListPage from "@/components/PackageListPage";
 import ProjectTabBar from "@/components/ProjectTabBar";
 import SubNav from "@/components/SubNav";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import WelcomePage from "@/components/WelcomePage";
 import { useAppStore } from "@/store";
+import type { ViewType } from "@/store";
 import { selectAndOpenProject } from "@/svc/project.svc";
 import { useEffect, useState } from "react";
 import { Toaster } from "sonner";
@@ -15,6 +17,7 @@ import { Toaster } from "sonner";
 function App(): React.JSX.Element {
   const [active, setActive] = useState(true);
   const tabs = useAppStore((s) => s.tabs);
+  const activeView = useAppStore((s) => s.activeView);
   const hasTabs = tabs.length > 0;
 
   // ウィンドウフォーカス状態を追跡し、非アクティブ時に CSS で減光する
@@ -50,7 +53,7 @@ function App(): React.JSX.Element {
               <ProjectTabBar />
               <SubNav />
               <main className="flex-1 overflow-auto p-4">
-                {/* TODO: でコンテンツを実装 */}
+                <MainContent activeView={activeView} />
               </main>
             </>
           ) : (
@@ -75,6 +78,28 @@ function App(): React.JSX.Element {
       </div>
     </TooltipProvider>
   );
+}
+
+/**
+ * activeView に応じてメインコンテンツを切り替える
+ */
+function MainContent({
+  activeView,
+}: {
+  activeView: ViewType;
+}): React.JSX.Element {
+  switch (activeView) {
+    case "packages":
+      return <PackageListPage />;
+    case "audit":
+    case "tree":
+    case "settings":
+      return (
+        <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
+          TODO: {activeView}
+        </div>
+      );
+  }
 }
 
 export default App;

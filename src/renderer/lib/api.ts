@@ -21,6 +21,10 @@ export function getOutdated(dir: string) {
   return getApi().getOutdated(dir);
 }
 
+export function getLatestVersions(names: string[], registryUrl: string) {
+  return getApi().getLatestVersions(names, registryUrl);
+}
+
 export function getAudit(dir: string) {
   return getApi().getAudit(dir);
 }

@@ -7,6 +7,8 @@ import { contextBridge, ipcRenderer } from "electron";
 const api = {
   loadProject: (dir: string) => ipcRenderer.invoke("load-project", dir),
   getOutdated: (dir: string) => ipcRenderer.invoke("get-outdated", dir),
+  getLatestVersions: (names: string[], registryUrl: string) =>
+    ipcRenderer.invoke("get-latest-versions", names, registryUrl),
   getAudit: (dir: string) => ipcRenderer.invoke("get-audit", dir),
   getDependencyTree: (dir: string, depth?: number) =>
     ipcRenderer.invoke("get-dependency-tree", dir, depth),

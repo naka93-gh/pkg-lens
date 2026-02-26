@@ -2,6 +2,7 @@ import { ipcMain } from "electron";
 import { loadProject, savePackageJson } from "./svc/project.svc";
 import {
   getOutdated,
+  getLatestVersions,
   getAudit,
   getDependencyTree,
   searchRegistry,
@@ -17,6 +18,11 @@ export function registerIpcHandlers(): void {
     savePackageJson(dir, data),
   );
   ipcMain.handle("get-outdated", (_e, dir: string) => getOutdated(dir));
+  ipcMain.handle(
+    "get-latest-versions",
+    (_e, names: string[], registryUrl: string) =>
+      getLatestVersions(names, registryUrl),
+  );
   ipcMain.handle("get-audit", (_e, dir: string) => getAudit(dir));
   ipcMain.handle("get-dependency-tree", (_e, dir: string) =>
     getDependencyTree(dir),

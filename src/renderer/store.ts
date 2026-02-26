@@ -6,7 +6,7 @@
 import { create } from "zustand";
 import type {
   ProjectData,
-  OutdatedEntry,
+  RegistryPackageMeta,
   AuditResult,
   TreeNode,
 } from "./types";
@@ -17,7 +17,7 @@ import type {
 export interface ProjectTab {
   dir: string;
   data: ProjectData | null;
-  outdated: OutdatedEntry[];
+  latestVersions: Record<string, RegistryPackageMeta> | null;
   audit: AuditResult | null;
   tree: TreeNode | null;
   dirty: boolean;
@@ -36,6 +36,7 @@ export interface AppState {
   tabs: ProjectTab[];
   activeTabIndex: number;
   activeView: ViewType;
+  searchQuery: string;
   registryUrl: string;
   theme: "light" | "dark";
 }
@@ -50,6 +51,7 @@ export interface AppActions {
   updateTab: (index: number, patch: Partial<ProjectTab>) => void;
   setActiveView: (view: ViewType) => void;
   setRegistryUrl: (url: string) => void;
+  setSearchQuery: (query: string) => void;
   setTheme: (theme: "light" | "dark") => void;
 }
 
@@ -58,6 +60,7 @@ export const useAppStore = create<AppState & AppActions>()((set) => ({
   // -1 = タブなし。0 以上でアクティブタブを示す
   activeTabIndex: -1,
   activeView: "packages",
+  searchQuery: "",
   registryUrl: "https://registry.npmjs.org",
   theme: "dark",
 
@@ -87,6 +90,8 @@ export const useAppStore = create<AppState & AppActions>()((set) => ({
     })),
 
   setActiveView: (activeView) => set({ activeView }),
+
+  setSearchQuery: (searchQuery) => set({ searchQuery }),
 
   setRegistryUrl: (registryUrl) => set({ registryUrl }),
 
