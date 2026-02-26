@@ -17,9 +17,12 @@ export interface ProjectTab {
   loading: boolean;
 }
 
+export type ViewType = "packages" | "audit" | "tree" | "settings";
+
 export interface AppState {
   tabs: ProjectTab[];
   activeTabIndex: number;
+  activeView: ViewType;
   registryUrl: string;
   theme: "light" | "dark";
 }
@@ -29,6 +32,7 @@ export interface AppActions {
   removeTab: (index: number) => void;
   setActiveTab: (index: number) => void;
   updateTab: (index: number, patch: Partial<ProjectTab>) => void;
+  setActiveView: (view: ViewType) => void;
   setRegistryUrl: (url: string) => void;
   setTheme: (theme: "light" | "dark") => void;
 }
@@ -36,8 +40,9 @@ export interface AppActions {
 export const useAppStore = create<AppState & AppActions>()((set) => ({
   tabs: [],
   activeTabIndex: -1,
+  activeView: "packages",
   registryUrl: "https://registry.npmjs.org",
-  theme: "light",
+  theme: "dark",
 
   addTab: (tab) =>
     set((s) => ({
@@ -61,6 +66,8 @@ export const useAppStore = create<AppState & AppActions>()((set) => ({
     set((s) => ({
       tabs: s.tabs.map((t, i) => (i === index ? { ...t, ...patch } : t)),
     })),
+
+  setActiveView: (activeView) => set({ activeView }),
 
   setRegistryUrl: (registryUrl) => set({ registryUrl }),
 
