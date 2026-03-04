@@ -113,6 +113,63 @@
   --tn-purple: oklch(0.72 0.15 300); /* #bb9af7 */
 }
 
+/*
+ * Light theme — warm white base + Tokyo Night accents
+ */
+:root.light {
+  --background: #faf8f5;
+  --foreground: #1e1e2e;
+
+  --card: #ffffff;
+  --card-foreground: #1e1e2e;
+
+  --popover: #ffffff;
+  --popover-foreground: #1e1e2e;
+
+  --primary: #2959aa;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f0ede8;
+  --secondary-foreground: #1e1e2e;
+
+  --muted: #f0ede8;
+  --muted-foreground: #7c7872;
+
+  --accent: #ece8e1;
+  --accent-foreground: #1e1e2e;
+
+  --destructive: #c4374b;
+  --destructive-foreground: #ffffff;
+
+  --border: #e5e2dd;
+  --input: #e5e2dd;
+  --ring: #2959aa;
+
+  --chart-1: #2959aa;
+  --chart-2: #2e7d5b;
+  --chart-3: #b8860b;
+  --chart-4: #7b43ba;
+  --chart-5: #c4374b;
+
+  /* Sidebar */
+  --sidebar: #f3f0ec;
+  --sidebar-foreground: #1e1e2e;
+  --sidebar-primary: #2959aa;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #ece8e1;
+  --sidebar-accent-foreground: #1e1e2e;
+  --sidebar-border: #e5e2dd;
+  --sidebar-ring: #2959aa;
+
+  /* Semantic */
+  --tn-success: #2e7d5b;
+  --tn-warning: #b8860b;
+  --tn-danger: #c4374b;
+  --tn-info: #2959aa;
+  --tn-orange: #c2660a;
+  --tn-purple: #7b43ba;
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -131,11 +188,18 @@
   }
 }
 
-/* Tailwind preflight が background-color を設定するため !important で上書き */
+/* ダーク: Tailwind preflight の background-color を透明に上書き（すりガラス用） */
 html,
 body,
 #root {
   background: transparent !important;
+}
+
+/* ライト: 不透明背景で壁紙の干渉を防ぐ */
+.light,
+.light body,
+.light #root {
+  background: var(--background) !important;
 }
 
 /*
@@ -155,6 +219,20 @@ body,
 
 .layer-card {
   background: oklch(0.235 0.025 264 / 0.1); /* #24283b @ 10% */
+}
+
+/* ライト: 不透明レイヤー */
+.light .layer-tabbar,
+.light .layer-subnav {
+  background: var(--secondary);
+}
+
+.light .layer-main {
+  background: var(--background);
+}
+
+.light .layer-card {
+  background: var(--card);
 }
 
 /*

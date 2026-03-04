@@ -10,6 +10,7 @@ import ProjectTabBar from "@/components/layout/ProjectTabBar";
 import SubNav from "@/components/layout/SubNav";
 import LicensePage from "@/components/licenses/LicensePage";
 import PackageListPage from "@/components/packages/PackageListPage";
+import SettingsPage from "@/components/settings/SettingsPage";
 import TreePage from "@/components/tree/TreePage";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import WelcomePage from "@/components/WelcomePage";
@@ -21,6 +22,7 @@ function App(): React.JSX.Element {
   const [active, setActive] = useState(true);
   const tabs = useAppStore((s) => s.tabs);
   const activeView = useAppStore((s) => s.activeView);
+  const theme = useAppStore((s) => s.theme);
   const hasTabs = tabs.length > 0;
 
   // ウィンドウフォーカス状態を追跡し、非アクティブ時に CSS で減光する
@@ -34,6 +36,11 @@ function App(): React.JSX.Element {
       window.removeEventListener("blur", onBlur);
     };
   }, []);
+
+  // テーマに応じて <html> に light クラスをトグル
+  useEffect(() => {
+    document.documentElement.classList.toggle("light", theme === "light");
+  }, [theme]);
 
   // Cmd+O / Ctrl+O でプロジェクトを開く
   useEffect(() => {
@@ -67,14 +74,13 @@ function App(): React.JSX.Element {
             </>
           )}
         </div>
-        {/* sonner のデフォルトスタイルは白背景なので上書き */}
         <Toaster
-          theme="dark"
+          theme={theme}
           toastOptions={{
             style: {
-              background: "oklch(0.25 0.025 264)",
-              border: "1px solid oklch(0.36 0.03 260)",
-              color: "oklch(0.82 0.03 256)",
+              background: "var(--card)",
+              border: "1px solid var(--border)",
+              color: "var(--card-foreground)",
             },
           }}
         />
@@ -97,11 +103,7 @@ function MainContent({ activeView }: { activeView: ViewType }): React.JSX.Elemen
     case "licenses":
       return <LicensePage />;
     case "settings":
-      return (
-        <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
-          TODO: {activeView}
-        </div>
-      );
+      return <SettingsPage />;
   }
 }
 
