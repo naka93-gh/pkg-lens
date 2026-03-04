@@ -1,13 +1,13 @@
 import { ipcMain } from "electron";
-import { loadProject, savePackageJson } from "./svc/project.svc";
+import { selectDirectory } from "./svc/dialog.svc";
 import {
-  getOutdated,
-  getLatestVersions,
   getAudit,
   getDependencyTree,
+  getLatestVersions,
+  getOutdated,
   searchRegistry,
 } from "./svc/npm.svc";
-import { selectDirectory } from "./svc/dialog.svc";
+import { loadProject, savePackageJson } from "./svc/project.svc";
 
 /**
  * すべての IPC ハンドラを登録する

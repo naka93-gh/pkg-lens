@@ -3,10 +3,10 @@
  * 200ms デバウンスで store の searchQuery を更新する
  */
 
-import { Input } from "@/components/ui/input";
-import { useAppStore } from "@/store";
 import { Search } from "lucide-react";
 import { useCallback, useRef } from "react";
+import { Input } from "@/components/ui/input";
+import { useAppStore } from "@/store";
 
 function SearchBar(): React.JSX.Element {
   // --- データ取得 ---

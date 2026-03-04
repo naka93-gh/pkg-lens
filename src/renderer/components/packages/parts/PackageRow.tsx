@@ -3,12 +3,12 @@
  * 5 列: パッケージ名 / 指定 ver / インストール済み ver / 最新 ver / audit
  */
 
+import { ShieldAlert } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { getOutdatedLevel, outdatedColorClass } from "@/lib/version";
 import { useAppStore } from "@/store";
 import type { DepType } from "@/types";
-import { ShieldAlert } from "lucide-react";
 
 interface PackageRowProps {
   name: string;

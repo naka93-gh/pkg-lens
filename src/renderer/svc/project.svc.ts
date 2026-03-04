@@ -5,7 +5,7 @@
 import { toast } from "sonner";
 import * as api from "../lib/api";
 import { useAppStore } from "../store";
-import type { ProjectData, RegistryPackageMeta, AuditResult, TreeNode } from "../types";
+import type { AuditResult, ProjectData, RegistryPackageMeta, TreeNode } from "../types";
 
 /**
  * プロジェクトを開き、loadProject → outdated → audit を段階的に取得してタブに反映

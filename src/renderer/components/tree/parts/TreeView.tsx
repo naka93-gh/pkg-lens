@@ -14,12 +14,7 @@ function TreeView({ nodes }: TreeViewProps): React.JSX.Element {
   return (
     <div className="flex flex-col">
       {nodes.map((node, i) => (
-        <TreeNodeItem
-          key={`${node.name}-${i}`}
-          node={node}
-          depth={0}
-          parentId=""
-        />
+        <TreeNodeItem key={`${node.name}-${i}`} node={node} depth={0} parentId="" />
       ))}
     </div>
   );

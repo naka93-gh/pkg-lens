@@ -3,11 +3,11 @@
  * 展開/折りたたみ + 子ノード遅延レンダリング
  */
 
+import { ChevronDown, ChevronRight, Minus } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useTreeSearch } from "@/components/tree/parts/TreeSearchContext";
 import { cn } from "@/lib/utils";
 import type { TreeNode } from "@/types";
-import { ChevronDown, ChevronRight, Minus } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
 
 interface TreeNodeItemProps {
   node: TreeNode;
@@ -82,12 +82,7 @@ function TreeNodeItem({ node, depth, parentId }: TreeNodeItemProps): React.JSX.E
       {isOpen &&
         hasChildren &&
         node.children.map((child, i) => (
-          <TreeNodeItem
-            key={`${child.name}-${i}`}
-            node={child}
-            depth={depth + 1}
-            parentId={myId}
-          />
+          <TreeNodeItem key={`${child.name}-${i}`} node={child} depth={depth + 1} parentId={myId} />
         ))}
     </div>
   );

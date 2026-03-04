@@ -3,13 +3,13 @@
  * Collapsible で折りたたみ可能。検索中は強制展開する
  */
 
+import { ChevronRight } from "lucide-react";
+import { useState } from "react";
 import PackageRow from "@/components/packages/parts/PackageRow";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import type { DepType } from "@/types";
-import { ChevronRight } from "lucide-react";
-import { useState } from "react";
 
 interface PackageSectionProps {
   depType: DepType;

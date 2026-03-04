@@ -4,10 +4,10 @@
  * macOS ではタイトルバーを兼ねるためドラッグ領域として機能する
  */
 
+import { Loader2, Plus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store";
 import { closeProject, selectAndOpenProject, switchTab } from "@/svc/project.svc";
-import { Loader2, Plus, X } from "lucide-react";
 
 function ProjectTabBar(): React.JSX.Element {
   // --- データ取得 ---

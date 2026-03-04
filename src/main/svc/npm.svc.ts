@@ -199,11 +199,11 @@ export async function getAudit(dir: string): Promise<AuditResult> {
     advisories,
     metadata: {
       vulnerabilities: {
-        critical: metaVulns["critical"] ?? 0,
-        high: metaVulns["high"] ?? 0,
-        moderate: metaVulns["moderate"] ?? 0,
-        low: metaVulns["low"] ?? 0,
-        info: metaVulns["info"] ?? 0,
+        critical: metaVulns.critical ?? 0,
+        high: metaVulns.high ?? 0,
+        moderate: metaVulns.moderate ?? 0,
+        low: metaVulns.low ?? 0,
+        info: metaVulns.info ?? 0,
       },
       totalDependencies,
     },
