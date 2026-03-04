@@ -3,6 +3,7 @@
  */
 
 import * as api from "../lib/api";
+import { extractPrefix, getOutdatedLevel } from "../lib/version";
 import { useAppStore } from "../store";
 import type { DepType } from "../types";
 
@@ -88,6 +89,42 @@ export async function save(): Promise<void> {
   await api.savePackageJson(active.tab.dir, active.tab.data);
   // 保存完了後に dirty を下ろす
   useAppStore.getState().updateTab(active.index, { dirty: false });
+}
+
+/**
+ * depType 内の outdated パッケージを一括で最新バージョンに更新する
+ * 既存のプレフィクス（^, ~ 等）は保持する。更新件数を返す
+ */
+export function batchUpdate(depType: DepType): number {
+  const active = getActiveTab();
+  if (!active?.tab.data) return 0;
+
+  const { latestVersions } = active.tab;
+  if (!latestVersions) return 0;
+
+  const deps = active.tab.data[depType];
+  const installedVersions = active.tab.data.installedVersions;
+  let count = 0;
+  const updated: Record<string, string> = { ...deps };
+
+  for (const [name, specifiedVersion] of Object.entries(deps)) {
+    const latest = latestVersions[name]?.version;
+    if (!latest) continue;
+
+    const installed = installedVersions[name] ?? specifiedVersion;
+    if (getOutdatedLevel(installed, latest) === "upToDate") continue;
+
+    const prefix = extractPrefix(specifiedVersion);
+    updated[name] = `${prefix}${latest}`;
+    count++;
+  }
+
+  if (count > 0) {
+    const data = { ...active.tab.data, [depType]: updated };
+    useAppStore.getState().updateTab(active.index, { data, dirty: true });
+  }
+
+  return count;
 }
 
 /**

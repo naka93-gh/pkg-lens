@@ -27,6 +27,17 @@ export function getOutdatedLevel(current: string, latest: string): OutdatedLevel
 /**
  * outdated レベルに対応する Tailwind テキストカラークラスを返す
  */
+/**
+ * バージョン文字列からプレフィクス（^, ~, >= 等）を抽出する
+ */
+export function extractPrefix(version: string): string {
+  const match = version.match(/^([^\d]*)/);
+  return match?.[1] ?? "";
+}
+
+/**
+ * outdated レベルに対応する Tailwind テキストカラークラスを返す
+ */
 export function outdatedColorClass(level: OutdatedLevel): string {
   switch (level) {
     case "major":
