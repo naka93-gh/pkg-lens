@@ -1,26 +1,41 @@
 /**
  * ライセンステーブル
- * パッケージ名・バージョン・ライセンスの 3 列でソート可能
+ * パッケージ名・種別・バージョン・ライセンスの 4 列でソート可能
  */
 
 import { useCallback, useMemo, useState } from "react";
+import type { LicenseDepType, LicenseRow } from "@/components/licenses/LicensePage";
 import { cn } from "@/lib/utils";
-import type { LicenseEntry } from "@/types";
 
 interface LicenseTableProps {
-  entries: LicenseEntry[];
+  entries: LicenseRow[];
 }
 
-type SortKey = "name" | "version" | "license";
+type SortKey = "name" | "depType" | "version" | "license";
 type SortDir = "asc" | "desc";
 
 const columns: { key: SortKey; label: string; className: string }[] = [
   { key: "name", label: "パッケージ名", className: "flex-[2]" },
+  { key: "depType", label: "種別", className: "w-[80px] shrink-0" },
   { key: "version", label: "バージョン", className: "w-[120px] shrink-0" },
   { key: "license", label: "ライセンス", className: "flex-1" },
 ];
 
-function compare(a: LicenseEntry, b: LicenseEntry, key: SortKey, dir: SortDir): number {
+const depTypeLabel: Record<LicenseDepType, string> = {
+  prod: "prod",
+  dev: "dev",
+  peer: "peer",
+  transitive: "trans",
+};
+
+const depTypeClass: Record<LicenseDepType, string> = {
+  prod: "bg-primary/15 text-primary",
+  dev: "bg-muted text-muted-foreground",
+  peer: "bg-chart-4/15 text-chart-4",
+  transitive: "bg-muted text-muted-foreground/60",
+};
+
+function compare(a: LicenseRow, b: LicenseRow, key: SortKey, dir: SortDir): number {
   const result = a[key].localeCompare(b[key]);
   return dir === "asc" ? result : -result;
 }
@@ -75,6 +90,16 @@ function LicenseTable({ entries }: LicenseTableProps): React.JSX.Element {
           className="flex items-center gap-2 px-3 py-1.5 text-xs hover:bg-accent/30 rounded transition-colors"
         >
           <span className="flex-[2] min-w-0 truncate font-mono">{entry.name}</span>
+          <span className="w-[80px] shrink-0">
+            <span
+              className={cn(
+                "inline-block rounded px-1.5 py-0.5 text-[10px] font-medium leading-none",
+                depTypeClass[entry.depType],
+              )}
+            >
+              {depTypeLabel[entry.depType]}
+            </span>
+          </span>
           <span className="w-[120px] shrink-0 font-mono text-muted-foreground">
             {entry.version}
           </span>

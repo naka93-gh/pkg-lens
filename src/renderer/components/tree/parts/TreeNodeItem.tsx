@@ -70,13 +70,9 @@ function TreeNodeItem({ node, depth, parentId }: TreeNodeItemProps): React.JSX.E
           <Minus className="size-3.5 shrink-0 text-muted-foreground/50" />
         )}
 
-        <span className="font-mono text-sm text-foreground">
-          {node.name}
-        </span>
+        <span className="font-mono text-sm text-foreground">{node.name}</span>
 
-        <span className="font-mono text-xs text-muted-foreground">
-          @{node.version}
-        </span>
+        <span className="font-mono text-xs text-muted-foreground">@{node.version}</span>
       </div>
 
       {isOpen &&

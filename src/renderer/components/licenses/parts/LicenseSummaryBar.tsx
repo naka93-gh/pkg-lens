@@ -5,18 +5,21 @@
 
 import { useMemo } from "react";
 import { cn } from "@/lib/utils";
-import type { LicenseEntry } from "@/types";
+
+interface HasLicense {
+  license: string;
+}
 
 interface LicenseSummaryBarProps {
-  licenses: LicenseEntry[];
+  rows: HasLicense[];
 }
 
 /**
  * ライセンス種別ごとの件数を集計し、上位を返す
  */
-function buildSummary(licenses: LicenseEntry[]): { label: string; count: number }[] {
+function buildSummary(rows: HasLicense[]): { label: string; count: number }[] {
   const counts = new Map<string, number>();
-  for (const l of licenses) {
+  for (const l of rows) {
     counts.set(l.license, (counts.get(l.license) ?? 0) + 1);
   }
 
@@ -32,8 +35,8 @@ function buildSummary(licenses: LicenseEntry[]): { label: string; count: number 
   return top;
 }
 
-function LicenseSummaryBar({ licenses }: LicenseSummaryBarProps): React.JSX.Element {
-  const summary = useMemo(() => buildSummary(licenses), [licenses]);
+function LicenseSummaryBar({ rows }: LicenseSummaryBarProps): React.JSX.Element {
+  const summary = useMemo(() => buildSummary(rows), [rows]);
 
   return (
     <div className="flex items-center gap-4">

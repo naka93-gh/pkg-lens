@@ -7,16 +7,15 @@ import { useMemo } from "react";
 import { buildSummary } from "@/components/licenses/parts/LicenseSummaryBar";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
-import type { LicenseEntry } from "@/types";
 
 interface LicenseFilterProps {
-  licenses: LicenseEntry[];
+  rows: { license: string }[];
   selected: string[];
   onChange: (selected: string[]) => void;
 }
 
-function LicenseFilter({ licenses, selected, onChange }: LicenseFilterProps): React.JSX.Element {
-  const summary = useMemo(() => buildSummary(licenses), [licenses]);
+function LicenseFilter({ rows, selected, onChange }: LicenseFilterProps): React.JSX.Element {
+  const summary = useMemo(() => buildSummary(rows), [rows]);
 
   return (
     <ToggleGroup
