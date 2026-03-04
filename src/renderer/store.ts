@@ -22,7 +22,7 @@ export interface ProjectTab {
 /**
  * サブナビで切り替えるビューの種別
  */
-export type ViewType = "packages" | "audit" | "tree" | "settings";
+export type ViewType = "packages" | "audit" | "tree" | "licenses" | "settings";
 
 /**
  * アプリの状態

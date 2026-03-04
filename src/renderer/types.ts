@@ -4,13 +4,14 @@
  */
 
 export type {
-  DepType,
-  ProjectData,
-  OutdatedEntry,
-  Severity,
   AuditAdvisory,
   AuditResult,
-  TreeNode,
-  RegistryPackageMeta,
+  DepType,
+  LicenseEntry,
+  OutdatedEntry,
+  ProjectData,
   RegistryPackage,
+  RegistryPackageMeta,
+  Severity,
+  TreeNode,
 } from "../shared/types";

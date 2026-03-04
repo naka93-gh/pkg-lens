@@ -1,6 +1,6 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import type { ProjectData } from "../../shared/types";
+import type { LicenseEntry, ProjectData } from "../../shared/types";
 
 /**
  * package-lock.json の packages フィールドからインストール済みバージョンを抽出
@@ -24,17 +24,47 @@ function parseInstalledVersions(lockRaw: string): Record<string, string> {
 }
 
 /**
+ * package-lock.json の packages フィールドからライセンス情報を抽出
+ */
+function parseLicenses(lockRaw: string): LicenseEntry[] {
+  const lock = JSON.parse(lockRaw);
+  const packages: Record<string, { version?: string; license?: string }> = lock.packages ?? {};
+  const result: LicenseEntry[] = [];
+  const PREFIX = "node_modules/";
+
+  for (const [key, val] of Object.entries(packages)) {
+    // ルートパッケージ（キー ""）はスキップ
+    if (key === "") continue;
+
+    // 最後の "node_modules/" 以降をパッケージ名として取り出す（ネスト対応）
+    const lastIdx = key.lastIndexOf(PREFIX);
+    if (lastIdx === -1 || !val.version) continue;
+
+    const name = key.slice(lastIdx + PREFIX.length);
+    result.push({
+      name,
+      version: val.version,
+      license: val.license ?? "UNKNOWN",
+    });
+  }
+
+  return result;
+}
+
+/**
  * package.json + package-lock.json を読み込み ProjectData を返す
  */
 export async function loadProject(dir: string): Promise<ProjectData> {
   const raw = await readFile(join(dir, "package.json"), "utf-8");
   const pkg = JSON.parse(raw);
 
-  // lockfile からインストール済みバージョンを取得（存在しなければ空）
+  // lockfile からインストール済みバージョン・ライセンス情報を取得（存在しなければ空）
   let installedVersions: Record<string, string> = {};
+  let licenses: LicenseEntry[] = [];
   try {
     const lockRaw = await readFile(join(dir, "package-lock.json"), "utf-8");
     installedVersions = parseInstalledVersions(lockRaw);
+    licenses = parseLicenses(lockRaw);
   } catch {
     // package-lock.json が存在しない場合は空のまま
   }
@@ -47,6 +77,7 @@ export async function loadProject(dir: string): Promise<ProjectData> {
     devDependencies: pkg.devDependencies ?? {},
     peerDependencies: pkg.peerDependencies ?? {},
     installedVersions,
+    licenses,
   };
 }
 
@@ -67,5 +98,5 @@ export async function savePackageJson(dir: string, data: ProjectData): Promise<v
   pkg.peerDependencies = data.peerDependencies;
 
   // npm の出力に合わせて 2 スペースインデント + 末尾改行
-  await writeFile(filePath, JSON.stringify(pkg, null, 2) + "\n", "utf-8");
+  await writeFile(filePath, `${JSON.stringify(pkg, null, 2)}\n`, "utf-8");
 }

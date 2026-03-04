@@ -3,18 +3,19 @@
  * タブが 0 個ならウェルカム画面、1 個以上ならタブバー + サブナビ + メインエリアを表示する
  */
 
+import { useEffect, useState } from "react";
+import { Toaster } from "sonner";
 import AuditPage from "@/components/audit/AuditPage";
-import PackageListPage from "@/components/packages/PackageListPage";
 import ProjectTabBar from "@/components/layout/ProjectTabBar";
 import SubNav from "@/components/layout/SubNav";
+import LicensePage from "@/components/licenses/LicensePage";
+import PackageListPage from "@/components/packages/PackageListPage";
 import TreePage from "@/components/tree/TreePage";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import WelcomePage from "@/components/WelcomePage";
-import { useAppStore } from "@/store";
 import type { ViewType } from "@/store";
+import { useAppStore } from "@/store";
 import { selectAndOpenProject } from "@/svc/project.svc";
-import { useEffect, useState } from "react";
-import { Toaster } from "sonner";
 
 function App(): React.JSX.Element {
   const [active, setActive] = useState(true);
@@ -93,6 +94,8 @@ function MainContent({ activeView }: { activeView: ViewType }): React.JSX.Elemen
       return <TreePage />;
     case "audit":
       return <AuditPage />;
+    case "licenses":
+      return <LicensePage />;
     case "settings":
       return (
         <div className="flex items-center justify-center h-full text-sm text-muted-foreground">

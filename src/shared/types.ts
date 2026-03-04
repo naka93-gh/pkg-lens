@@ -13,6 +13,7 @@ export interface ProjectData {
   devDependencies: Record<string, string>;
   peerDependencies: Record<string, string>;
   installedVersions: Record<string, string>;
+  licenses: LicenseEntry[];
 }
 
 /**
@@ -86,6 +87,15 @@ export interface RegistryPackageMeta {
     unpackedSize?: number;
   };
   [key: string]: unknown;
+}
+
+/**
+ * ライセンス情報 1件
+ */
+export interface LicenseEntry {
+  name: string;
+  version: string;
+  license: string;
 }
 
 /**

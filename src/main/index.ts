@@ -1,6 +1,6 @@
+import { join } from "node:path";
 import { electronApp, is, optimizer } from "@electron-toolkit/utils";
 import { app, BrowserWindow, shell } from "electron";
-import { join } from "node:path";
 import { registerIpcHandlers } from "./ipc";
 
 /**
@@ -11,10 +11,10 @@ function createWindow(): BrowserWindow {
   const isWin = process.platform === "win32";
 
   const win = new BrowserWindow({
-    width: 1200,
-    height: 800,
-    minWidth: 800,
-    minHeight: 600,
+    width: 1920,
+    height: 1080,
+    minWidth: 1200,
+    minHeight: 800,
     // Ghostty 風の半透明ウィンドウを実現するため、Chromium の背景を完全透明にする
     transparent: true,
     backgroundColor: "#00000000",

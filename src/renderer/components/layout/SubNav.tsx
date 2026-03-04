@@ -3,16 +3,17 @@
  * メインコンテンツ領域のビュー（パッケージ一覧・Audit・依存ツリー・設定）を切り替える
  */
 
+import { GitBranch, Package, Scale, Settings, ShieldAlert } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useAppStore, type ViewType } from "@/store";
-import { GitBranch, Package, Settings, ShieldAlert } from "lucide-react";
 
 // アイコンのみ表示し、ラベルはツールチップで補足する
 const navItems: { view: ViewType; icon: typeof Package; label: string }[] = [
   { view: "packages", icon: Package, label: "パッケージ一覧" },
   { view: "audit", icon: ShieldAlert, label: "Audit" },
   { view: "tree", icon: GitBranch, label: "依存ツリー" },
+  { view: "licenses", icon: Scale, label: "ライセンス" },
   { view: "settings", icon: Settings, label: "設定" },
 ];
 
