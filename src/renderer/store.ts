@@ -17,6 +17,7 @@ export interface ProjectTab {
   tree: TreeNode[] | null;
   dirty: boolean;
   loading: boolean;
+  selectedPackage: string | null;
 }
 
 /**
@@ -47,6 +48,7 @@ export interface AppActions {
   setActiveView: (view: ViewType) => void;
   setRegistryUrl: (url: string) => void;
   setSearchQuery: (query: string) => void;
+  setSelectedPackage: (name: string | null) => void;
   setTheme: (theme: "light" | "dark") => void;
 }
 
@@ -89,6 +91,17 @@ export const useAppStore = create<AppState & AppActions>()((set) => ({
   setSearchQuery: (searchQuery) => set({ searchQuery }),
 
   setRegistryUrl: (registryUrl) => set({ registryUrl }),
+
+  setSelectedPackage: (name) =>
+    set((s) => {
+      const idx = s.activeTabIndex;
+      if (idx < 0) return s;
+      const tab = s.tabs[idx];
+      const next = tab.selectedPackage === name ? null : name;
+      return {
+        tabs: s.tabs.map((t, i) => (i === idx ? { ...t, selectedPackage: next } : t)),
+      };
+    }),
 
   setTheme: (theme) => set({ theme }),
 }));

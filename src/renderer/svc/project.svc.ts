@@ -30,6 +30,7 @@ export async function openProject(dir: string): Promise<void> {
     tree: null,
     dirty: false,
     loading: true,
+    selectedPackage: null,
   });
 
   const tabIndex = store.getState().tabs.length - 1;

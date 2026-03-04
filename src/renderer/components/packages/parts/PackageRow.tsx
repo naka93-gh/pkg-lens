@@ -3,7 +3,9 @@
  * 5 列: パッケージ名 / 指定 ver / インストール済み ver / 最新 ver / audit
  */
 
+import { useCallback } from "react";
 import { ShieldAlert } from "lucide-react";
+import PackageDetailPanel from "@/components/packages/parts/PackageDetailPanel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { getOutdatedLevel, outdatedColorClass } from "@/lib/version";
@@ -24,13 +26,27 @@ function PackageRow({ name, depType }: PackageRowProps): React.JSX.Element {
   const latestLoaded = tab?.latestVersions !== null;
   const advisories = tab?.audit?.advisories?.filter((a) => a.moduleName === name) ?? [];
   const auditLoaded = tab?.audit !== null;
+  const isSelected = useAppStore((s) => s.tabs[s.activeTabIndex]?.selectedPackage === name);
+  const setSelectedPackage = useAppStore((s) => s.setSelectedPackage);
 
   // --- データ加工 ---
   const level = latest && installedVersion ? getOutdatedLevel(installedVersion, latest) : null;
 
+  // --- ハンドラ ---
+  const handleClick = useCallback(() => {
+    setSelectedPackage(name);
+  }, [setSelectedPackage, name]);
+
   // --- 描画 ---
   return (
-    <div className="flex items-center gap-2 px-3 py-1 text-xs hover:bg-accent/30 rounded">
+    <div>
+    <div
+      className={cn(
+        "flex items-center gap-2 px-3 py-1 text-xs rounded cursor-pointer",
+        isSelected ? "bg-accent/50" : "hover:bg-accent/30",
+      )}
+      onClick={handleClick}
+    >
       {/* パッケージ名 */}
       <span className="w-[40%] min-w-0 truncate font-mono">{name}</span>
 
@@ -67,6 +83,8 @@ function PackageRow({ name, depType }: PackageRowProps): React.JSX.Element {
           <Skeleton className="h-3 w-8" />
         )}
       </span>
+    </div>
+    {isSelected && <PackageDetailPanel name={name} />}
     </div>
   );
 }
