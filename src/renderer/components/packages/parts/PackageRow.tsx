@@ -18,8 +18,8 @@ interface PackageRowProps {
 function PackageRow({ name, depType }: PackageRowProps): React.JSX.Element {
   // --- データ取得 ---
   const tab = useAppStore((s) => s.tabs[s.activeTabIndex]);
-  const specifiedVersion = tab?.data?.[depType][name] ?? "";
-  const installedVersion = tab?.data?.installedVersions[name];
+  const specifiedVersion = tab?.data?.[depType]?.[name] ?? "";
+  const installedVersion = tab?.data?.installedVersions?.[name];
   const latest = tab?.latestVersions?.[name]?.version;
   const latestLoaded = tab?.latestVersions !== null;
   const advisories = tab?.audit?.advisories?.filter((a) => a.moduleName === name) ?? [];

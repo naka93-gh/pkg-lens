@@ -7,6 +7,7 @@ import {
   getOutdated,
   searchRegistry,
 } from "./svc/npm.svc";
+import type { ProjectData } from "../shared/types";
 import { loadProject, savePackageJson } from "./svc/project.svc";
 
 /**
@@ -14,7 +15,9 @@ import { loadProject, savePackageJson } from "./svc/project.svc";
  */
 export function registerIpcHandlers(): void {
   ipcMain.handle("load-project", (_e, dir: string) => loadProject(dir));
-  ipcMain.handle("save-package-json", (_e, dir, data) => savePackageJson(dir, data));
+  ipcMain.handle("save-package-json", (_e, dir: string, data: ProjectData) =>
+    savePackageJson(dir, data),
+  );
   ipcMain.handle("get-outdated", (_e, dir: string) => getOutdated(dir));
   ipcMain.handle("get-latest-versions", (_e, names: string[], registryUrl: string) =>
     getLatestVersions(names, registryUrl),

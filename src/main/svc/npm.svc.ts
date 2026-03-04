@@ -5,6 +5,7 @@ import type {
   OutdatedEntry,
   RegistryPackage,
   RegistryPackageMeta,
+  Severity,
   TreeNode,
 } from "../../shared/types";
 import { isExpired, loadRegistryCache, saveRegistryCache } from "./cache.svc";
@@ -83,7 +84,9 @@ export async function getLatestVersions(
     while (cursor < uncached.length) {
       const name = uncached[cursor++];
       try {
-        const res = await fetch(`${registryUrl}/${name}/latest`);
+        const res = await fetch(`${registryUrl}/${name}/latest`, {
+          signal: AbortSignal.timeout(15_000),
+        });
         if (!res.ok) continue;
         const json = (await res.json()) as RegistryPackageMeta;
         if (json.version) {
@@ -170,6 +173,14 @@ export async function getAudit(dir: string): Promise<AuditResult> {
 
   if (!json.vulnerabilities) return EMPTY_AUDIT;
 
+  const SEVERITIES: ReadonlySet<string> = new Set<Severity>([
+    "critical",
+    "high",
+    "moderate",
+    "low",
+    "info",
+  ]);
+
   // via のオブジェクト要素（直接 advisory）を AuditAdvisory に変換
   const advisories: AuditAdvisory[] = [];
   for (const vuln of Object.values(json.vulnerabilities)) {
@@ -178,10 +189,13 @@ export async function getAudit(dir: string): Promise<AuditResult> {
 
     for (const via of vuln.via) {
       if (typeof via === "string") continue;
+      const severity: Severity = SEVERITIES.has(via.severity)
+        ? (via.severity as Severity)
+        : "info";
       advisories.push({
         id: via.source,
         title: via.title,
-        severity: via.severity as AuditAdvisory["severity"],
+        severity,
         moduleName: vuln.name,
         vulnerableVersions: via.range,
         patchedVersions: hasFix ? "fix available" : "No fix",

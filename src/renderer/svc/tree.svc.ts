@@ -4,7 +4,6 @@
 
 import * as api from "../lib/api";
 import { useAppStore } from "../store";
-import type { TreeNode } from "../types";
 
 /**
  * アクティブプロジェクトの依存ツリーを取得
@@ -14,6 +13,6 @@ export async function loadTree(depth?: number): Promise<void> {
   const tab = tabs[activeTabIndex];
   if (!tab) return;
 
-  const tree = (await api.getDependencyTree(tab.dir, depth)) as TreeNode[];
+  const tree = await api.getDependencyTree(tab.dir, depth);
   useAppStore.getState().updateTab(activeTabIndex, { tree });
 }

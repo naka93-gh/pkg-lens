@@ -5,7 +5,7 @@
 import { toast } from "sonner";
 import * as api from "../lib/api";
 import { useAppStore } from "../store";
-import type { AuditResult, ProjectData, RegistryPackageMeta, TreeNode } from "../types";
+import type { ProjectData } from "../types";
 
 /**
  * プロジェクトを開き、loadProject → outdated → audit を段階的に取得してタブに反映
@@ -37,7 +37,7 @@ export async function openProject(dir: string): Promise<void> {
   // 1. loadProject — これが失敗したらタブを消す
   let data: ProjectData;
   try {
-    data = (await api.loadProject(dir)) as ProjectData;
+    data = await api.loadProject(dir);
   } catch {
     store.getState().removeTab(tabIndex);
     toast.error("package.json が見つかりません", { description: dir });
@@ -47,7 +47,7 @@ export async function openProject(dir: string): Promise<void> {
   // テーブル即座描画（パッケージ名・指定ver・インストール済みver）
   store.getState().updateTab(tabIndex, { data, loading: false });
 
-  // 2. latestVersions / audit を並列取得（個別 catch で失敗を握りつぶす）
+  // 2. latestVersions / audit / tree を並列取得（個別に失敗トーストを表示）
   const allNames = [
     ...Object.keys(data.dependencies),
     ...Object.keys(data.devDependencies),
@@ -56,11 +56,18 @@ export async function openProject(dir: string): Promise<void> {
   const { registryUrl } = store.getState();
 
   const [latestVersions, audit, tree] = await Promise.all([
-    (
-      api.getLatestVersions(allNames, registryUrl) as Promise<Record<string, RegistryPackageMeta>>
-    ).catch(() => null),
-    (api.getAudit(dir) as Promise<AuditResult>).catch(() => null),
-    (api.getDependencyTree(dir) as Promise<TreeNode[]>).catch(() => null),
+    api.getLatestVersions(allNames, registryUrl).catch((e: unknown) => {
+      toast.error("最新バージョンの取得に失敗しました", { description: String(e) });
+      return null;
+    }),
+    api.getAudit(dir).catch((e: unknown) => {
+      toast.error("audit の取得に失敗しました", { description: String(e) });
+      return null;
+    }),
+    api.getDependencyTree(dir).catch((e: unknown) => {
+      toast.error("依存ツリーの取得に失敗しました", { description: String(e) });
+      return null;
+    }),
   ]);
 
   store.getState().updateTab(tabIndex, {
@@ -74,7 +81,7 @@ export async function openProject(dir: string): Promise<void> {
  * ディレクトリ選択ダイアログ経由でプロジェクトを開く
  */
 export async function selectAndOpenProject(): Promise<void> {
-  const dir = (await api.selectDirectory()) as string | null;
+  const dir = await api.selectDirectory();
   if (dir) {
     await openProject(dir);
   }

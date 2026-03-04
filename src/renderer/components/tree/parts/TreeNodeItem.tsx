@@ -77,8 +77,8 @@ function TreeNodeItem({ node, depth, parentId }: TreeNodeItemProps): React.JSX.E
 
       {isOpen &&
         hasChildren &&
-        node.children.map((child, i) => (
-          <TreeNodeItem key={`${child.name}-${i}`} node={child} depth={depth + 1} parentId={myId} />
+        node.children.map((child) => (
+          <TreeNodeItem key={nodeId(child, myId)} node={child} depth={depth + 1} parentId={myId} />
         ))}
     </div>
   );

@@ -4,7 +4,7 @@
 
 import * as api from "../lib/api";
 import { useAppStore } from "../store";
-import type { DepType, RegistryPackage } from "../types";
+import type { DepType } from "../types";
 
 /**
  * アクティブタブとそのインデックスを取得する
@@ -93,6 +93,6 @@ export async function save(): Promise<void> {
 /**
  * レジストリ検索
  */
-export function searchPackages(query: string): Promise<unknown> {
-  return api.searchRegistry(query) as Promise<RegistryPackage[]>;
+export function searchPackages(query: string) {
+  return api.searchRegistry(query);
 }

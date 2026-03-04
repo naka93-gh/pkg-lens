@@ -56,7 +56,7 @@ function parseLicenses(lockRaw: string): LicenseEntry[] {
  */
 export async function loadProject(dir: string): Promise<ProjectData> {
   const raw = await readFile(join(dir, "package.json"), "utf-8");
-  const pkg = JSON.parse(raw);
+  const pkg: Record<string, unknown> = JSON.parse(raw);
 
   // lockfile からインストール済みバージョン・ライセンス情報を取得（存在しなければ空）
   let installedVersions: Record<string, string> = {};
@@ -71,11 +71,11 @@ export async function loadProject(dir: string): Promise<ProjectData> {
 
   // フィールドが省略されているケースに備えて空オブジェクトで埋める
   return {
-    name: pkg.name ?? "",
-    version: pkg.version ?? "0.0.0",
-    dependencies: pkg.dependencies ?? {},
-    devDependencies: pkg.devDependencies ?? {},
-    peerDependencies: pkg.peerDependencies ?? {},
+    name: typeof pkg.name === "string" ? pkg.name : "",
+    version: typeof pkg.version === "string" ? pkg.version : "0.0.0",
+    dependencies: (pkg.dependencies as Record<string, string>) ?? {},
+    devDependencies: (pkg.devDependencies as Record<string, string>) ?? {},
+    peerDependencies: (pkg.peerDependencies as Record<string, string>) ?? {},
     installedVersions,
     licenses,
   };
@@ -89,7 +89,7 @@ export async function savePackageJson(dir: string, data: ProjectData): Promise<v
 
   // 既存の package.json を読み直してマージする（scripts 等の管理外フィールドを消さないため）
   const raw = await readFile(filePath, "utf-8");
-  const pkg = JSON.parse(raw);
+  const pkg: Record<string, unknown> = JSON.parse(raw);
 
   pkg.name = data.name;
   pkg.version = data.version;
